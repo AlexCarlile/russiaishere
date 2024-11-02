@@ -1,0 +1,47 @@
+/* about.css */
+img {
+    max-width: 100%; /* Ширина изображения */
+}
+
+.about-container {
+    display: flex; /* Используем Flexbox для расположения изображения и текста */
+    padding: 20px;
+    background-color: #f0f0f0;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.about-image {
+    width: 30%;
+    height: auto; /* Высота сохраняет пропорции */
+    margin-right: 20px; /* Отступ справа от изображения */
+    border-radius: 8px; /* Закругленные углы изображения */
+}
+
+.about-text {
+    flex: 1; /* Занимает оставшееся пространство */
+}
+
+.about-title {
+    font-size: 28px;
+    margin-bottom: 15px;
+    color: #2c3e50;
+    text-align: left; /* Выравнивание заголовка влево */
+}
+
+.about-container p {
+    font-size: 21px;
+    line-height: 1.6;
+    color: #34495e;
+    margin-bottom: 15px;
+}
+
+.about-container ul {
+    list-style-type: disc;
+    padding-left: 20px;
+    font-size: 21px;
+}
+
+.about-container li {
+    margin-bottom: 10px;
+}

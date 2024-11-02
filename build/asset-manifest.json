@@ -1,0 +1,23 @@
+{
+  "files": {
+    "main.css": "/static/css/main.7276280c.css",
+    "main.js": "/static/js/main.7f0153c9.js",
+    "static/media/Vertical_container.jpg": "/static/media/Vertical_container.e9c065db7f3ad198ab5a.jpg",
+    "static/media/rosatomSchoolLogo.jpg": "/static/media/rosatomSchoolLogo.314d778f271ba4dc0cb1.jpg",
+    "static/media/Container-10.png": "/static/media/Container-10.b8d8ca8bf70454dc78e2.png",
+    "static/media/Container-14.png": "/static/media/Container-14.3d74d8e506316602ee5c.png",
+    "static/media/Container-9.png": "/static/media/Container-9.ca8011132e1d28a737cb.png",
+    "static/media/Container-6.png": "/static/media/Container-6.2ba49aed9d52497d3052.png",
+    "static/media/Container-13.png": "/static/media/Container-13.034a7d8178cb99a152cb.png",
+    "static/media/Container-17.png": "/static/media/Container-17.3e908138549bb7e064d2.png",
+    "static/media/Container-8.png": "/static/media/Container-8.c27cc450341858fc3fdd.png",
+    "static/media/Rosatom.png": "/static/media/Rosatom.570c03832715d8bb74ff.png",
+    "index.html": "/index.html",
+    "main.7276280c.css.map": "/static/css/main.7276280c.css.map",
+    "main.7f0153c9.js.map": "/static/js/main.7f0153c9.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.7276280c.css",
+    "static/js/main.7f0153c9.js"
+  ]
+}

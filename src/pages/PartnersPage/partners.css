@@ -1,0 +1,23 @@
+.partners-container {
+    padding: 20px;
+    background-color: transparent; /* Светлый фон */
+    text-align: center; /* Выравнивание заголовка по центру */
+}
+
+.partners-title {
+    font-size: 24px; /* Размер шрифта заголовка */
+    margin-bottom: 20px; /* Отступ снизу */
+    color: #333; /* Цвет заголовка */
+}
+
+.partners-container img {
+    max-width: 100%; /* Ширина изображения не больше ширины контейнера */
+    height: auto; /* Высота изображения сохраняет пропорции */
+    margin: 10px; /* Отступ между изображениями */
+    border-radius: 8px; /* Закругленные углы изображений */
+    transition: transform 0.2s; /* Плавный эффект при наведении */
+}
+
+.partners-container img:hover {
+    transform: scale(1.05); /* Увеличение изображения при наведении */
+}
