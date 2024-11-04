@@ -30,7 +30,6 @@ export const App: React.FC = () => {
         <Route path="/actions" element={<ActionPage />}/>
         <Route path="/about" element={<AboutPage />}/>
         <Route path="/partners" element={<PartnersPage />}/>
-        <Route path="/admin" element={<AdminPage />} />
         <Route
           path='*'
           element={
@@ -52,6 +51,7 @@ const InternalRoutes = () => {
       {/* <Route path="/partners" element={<PartnersPage />}/> */}
       <Route path="/personal" element={<PersonalArea />}/>
       <Route path="/projects/:teamId" element={<Projects />}/>
+      <Route path="/admin" element={<AdminPage />} />
     </Routes>
 
   )

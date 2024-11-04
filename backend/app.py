@@ -95,7 +95,7 @@ def get_users():
     return jsonify(users)
 
 # Эндпоинт для получения акций
-@app.route('/api/campaigns', methods=['GET'])
+@app.route('/api/admin_campaigns', methods=['GET'])
 def get_admin_campaigns():
     campaigns = fetch_campaigns()
     return jsonify(campaigns)
@@ -112,18 +112,45 @@ def close_connection(exception):
     if db is not None:
         db.close()
 
+@app.route('/api/projects/<int:project_id>', methods=['PUT'])
+def update_project(project_id):
+    data = request.get_json()
+    title = data.get('title')
+
+    db = get_db(DATABASE_PROJECTS)
+    cursor = db.cursor()
+
+    if title:
+        cursor.execute("UPDATE Projects SET title = ? WHERE id = ?", (title, project_id))
+
+    db.commit()
+    return jsonify({"message": "Project updated successfully"}), 200
+
+@app.route('/api/campaigns/<int:campaign_id>', methods=['PUT'])
+def update_campaign(campaign_id):
+    data = request.get_json()
+    title = data.get('title')  # Добавлено поле title
+    status = data.get('approval_status')
+
+    db = get_db(DATABASE_CAMPAIGNS)
+    cursor = db.cursor()
+
+    if title:  # Если title присутствует, обновляем его
+        cursor.execute("UPDATE Campaigns SET title = ? WHERE id = ?", (title, campaign_id))
+
+    if status:  # Обновление статуса
+        cursor.execute("UPDATE Campaigns SET approval_status = ? WHERE id = ?", (status, campaign_id))
+
+    db.commit()
+    return jsonify({"message": "Campaign updated successfully"}), 200
+
 @app.route('/api/users/<int:user_id>', methods=['PUT'])
 def update_user(user_id):
     data = request.get_json()
     role = data.get('role')
-    password = data.get('password')
 
-    db = get_db('users')
+    db = get_db(DATABASE_USERS)
     cursor = db.cursor()
-
-    if password:
-        hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
-        cursor.execute("UPDATE Users SET password = ? WHERE id = ?", (hashed_password, user_id))
 
     if role:
         cursor.execute("UPDATE Users SET role = ? WHERE id = ?", (role, user_id))

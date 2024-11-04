@@ -19,13 +19,18 @@ export const headerItems:HeaderItems[] = [
     },
 
     {
-        key: 3,
-        label: "О проекте",
-        url: "/about"
-      },
+      key: 3,
+      label: "О проекте",
+      url: "/about"
+    },
     {
-        key: 4,
-        label: "Партнеры",
-        url: "/partners"
-      },
+      key: 4,
+      label: "Партнеры",
+      url: "/partners"
+    },
+    {
+      key: 5,
+      label: "Админ-панель",
+      url: "/admin"
+    },
   ]

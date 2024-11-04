@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { MaterialReactTable, useMaterialReactTable } from 'material-react-table';
+import { Modal, Form, Input, Select, Button, message } from 'antd';
 import axios from 'axios';
 
 interface User {
@@ -22,6 +23,9 @@ const roles = ['админ', 'участник', 'наставник', '?нас�
 export const UsersTable: React.FC = () => {
     const [users, setUsers] = useState<User[]>([]);
     const [passwords, setPasswords] = useState<{ [key: number]: string }>({}); // Состояние для хранения паролей
+    const [selectedUser, setSelectedUser] = useState<User | null>(null); // Выбранный пользователь
+    const [isModalVisible, setIsModalVisible] = useState(false);
+    const [form] = Form.useForm();
 
     const fetchUsers = async () => {
         try {
@@ -36,7 +40,13 @@ export const UsersTable: React.FC = () => {
         fetchUsers();
     }, []);
 
-    
+
+    const handleRowClick = (user: User) => {
+        setSelectedUser(user);
+        form.setFieldsValue(user);
+        setIsModalVisible(true);
+    };
+
     const updateUser = async (userId: number, newRole: string) => {
         try {
             const newPassword = passwords[userId]; // Получаем новый пароль для пользователя
@@ -56,6 +66,23 @@ export const UsersTable: React.FC = () => {
             alert('Данные пользователя успешно обновлены');
         } catch (error) {
             console.error('Error updating user:', error);
+        }
+    };
+
+
+    const handleSave = async () => {
+        try {
+            const updatedUser = form.getFieldsValue();
+            await axios.put(`http://127.0.0.1:5000/api/users/${updatedUser.id}`, updatedUser);
+            setUsers(prevUsers => 
+                prevUsers.map(user => (user.id === updatedUser.id ? updatedUser : user))
+            );
+            message.success('Данные пользователя успешно обновлены');
+            setIsModalVisible(false);
+            setSelectedUser(null);
+        } catch (error) {
+            console.error('Error updating user:', error);
+            message.error('Ошибка при обновлении данных пользователя');
         }
     };
 
@@ -90,14 +117,65 @@ export const UsersTable: React.FC = () => {
     const table = useMaterialReactTable({
         columns,
         data: users,
-        enableRowSelection: true, //enable some features
-        enableColumnOrdering: true, //enable a feature for all columns
-        enableGlobalFilter: false, //turn off a feature
-    })
+        enableRowSelection: true,
+        enableColumnOrdering: true,
+        enableGlobalFilter: false,
+    });
 
     return (
-        <MaterialReactTable
-            table={table}
-        />
+        <>
+            <MaterialReactTable
+                columns={columns}
+                data={users}
+                renderRowActions={({ row }) => (
+                    <Button type="link" onClick={() => handleRowClick(row.original)}>
+                        Редактировать
+                    </Button>
+                )}
+            />
+            <Modal
+                title="Редактирование пользователя"
+                visible={isModalVisible}
+                onCancel={() => setIsModalVisible(false)}
+                footer={[
+                    <Button key="cancel" onClick={() => setIsModalVisible(false)}>
+                        Отмена
+                    </Button>,
+                    <Button key="save" type="primary" onClick={handleSave}>
+                        Сохранить
+                    </Button>,
+                ]}
+            >
+                <Form form={form} layout="vertical">
+                    <Form.Item name="email" label="Email">
+                        <Input disabled />
+                    </Form.Item>
+                    <Form.Item name="name" label="Имя" rules={[{ required: true, message: 'Пожалуйста, введите имя' }]}>
+                        <Input />
+                    </Form.Item>
+                    <Form.Item name="surname" label="Фамилия" rules={[{ required: true, message: 'Пожалуйста, введите фамилию' }]}>
+                        <Input />
+                    </Form.Item>
+                    <Form.Item name="region" label="Регион">
+                        <Input />
+                    </Form.Item>
+                    <Form.Item name="locality" label="Город">
+                        <Input />
+                    </Form.Item>
+                    <Form.Item name="school" label="Школа">
+                        <Input />
+                    </Form.Item>
+                    <Form.Item name="role" label="Роль">
+                        <Select>
+                            {roles.map(role => (
+                                <Select.Option key={role} value={role}>
+                                    {role}
+                                </Select.Option>
+                            ))}
+                        </Select>
+                    </Form.Item>
+                </Form>
+            </Modal>
+        </>
     )
 }
