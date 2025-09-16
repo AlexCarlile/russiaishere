@@ -1,13 +1,15 @@
 import sqlite3
-from flask import g
 import os
+from flask import g
 
-DATABASE_USERS = 'data/users.db'
-DATABASE_CAMPAIGNS = 'data/campaigns.db'
-DATABASE_PROJECTS = 'data/projects.db'
-DATABASE_TEAMS = 'data/teams.db'
-DATABASE_TEAM_MEMBERS = './data/team_members.db'
-DATABASE_NEWS = './data/news.db'
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
+DATABASE_USERS = os.path.join(BASE_DIR, "data", "users.db")
+DATABASE_CAMPAIGNS = os.path.join(BASE_DIR, "data", "campaigns.db")
+DATABASE_PROJECTS = os.path.join(BASE_DIR, "data", "projects.db")
+DATABASE_TEAMS = os.path.join(BASE_DIR, "data", "teams.db")
+DATABASE_TEAM_MEMBERS = os.path.join(BASE_DIR, "data", "team_members.db")
+DATABASE_NEWS = os.path.join(BASE_DIR, "data", "news.db")
 
 # Подключение к базе данных пользователей
 def get_db_users():
