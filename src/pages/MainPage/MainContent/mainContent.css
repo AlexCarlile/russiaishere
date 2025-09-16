@@ -10,10 +10,16 @@
 .project-intro {
     display: flex;
     justify-content: space-between;
+    flex-wrap: wrap;
     gap: 20px;
     padding: 40px;
     border-radius: 20px;
     margin-bottom: 40px;
+}
+
+.project-description,
+.news-section {
+  flex: 1 1 400px; /* ← минимум 400px, потом перенос */
 }
 
 .project-description {
@@ -56,7 +62,9 @@
     flex: 1;
     background-color: #f5f5f5;
     padding: 20px;
-    border-radius: 10px;
+    border-radius: 48px;
+    display: flex;
+    flex-direction: column;
 }
 
 .news-section h3 {
@@ -163,4 +171,108 @@
 
 .action-text button:hover {
     background-color: #e04040;
+}
+
+.news-items-vertical {
+  height: 250px; /* ← фиксированная высота, под 2 карточки */
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  padding-right: 8px;
+}
+
+/* Стилизация скроллбара — по желанию */
+.news-items-vertical::-webkit-scrollbar {
+  width: 6px;
+}
+
+.news-items-vertical::-webkit-scrollbar-thumb {
+  background-color: #ccc;
+  border-radius: 4px;
+}
+
+@media (max-width: 1200px) {
+  .project-description,
+  .news-section {
+    flex: 1 1 100%;
+  }
+}
+
+@media (max-width: 768px) {
+  .main-content {
+    padding: 10px;
+  }
+
+  .project-intro {
+    flex-direction: column;
+    padding: 20px;
+  }
+
+  .project-description,
+  .news-section {
+    flex: 1 1 100%;
+    padding: 16px;
+    border-radius: 24px;
+  }
+
+  .project-description h2 {
+    font-size: 22px;
+  }
+
+  .project-description p {
+    font-size: 14px;
+  }
+
+  .cta-button {
+    font-size: 14px;
+    padding: 8px 16px;
+  }
+
+  .news-section h3 {
+    font-size: 20px;
+  }
+
+  .news-item {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .news-item img {
+    width: 100%;
+    height: auto;
+    margin: 0 0 10px 0;
+  }
+
+  .news-item p {
+    font-size: 14px;
+  }
+
+  .news-item span {
+    font-size: 12px;
+  }
+
+  .action-description {
+    flex-direction: column;
+  }
+
+  .action-description img {
+    width: 100%;
+  }
+
+  .action-text h3 {
+    font-size: 18px;
+    text-align: center;
+  }
+
+  .action-text button {
+    width: 100%;
+    font-size: 14px;
+  }
+
+  .news-items-vertical {
+    height: auto; /* разрешить полный рост, без фиксированной высоты */
+    max-height: 300px;
+    overflow-y: auto;
+  }
 }

@@ -1,7 +1,4 @@
 /* about.css */
-img {
-    max-width: 100%; /* Ширина изображения */
-}
 
 .about-container {
     display: flex; /* Используем Flexbox для расположения изображения и текста */
@@ -9,13 +6,16 @@ img {
     background-color: #f0f0f0;
     border-radius: 8px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    overflow-x: auto; 
 }
 
 .about-image {
-    width: 30%;
-    height: auto; /* Высота сохраняет пропорции */
-    margin-right: 20px; /* Отступ справа от изображения */
-    border-radius: 8px; /* Закругленные углы изображения */
+    width: 35vw;
+    aspect-ratio: 3 / 4; /* Ширина к высоте — вертикальное изображение */
+    object-fit: cover;
+    flex-shrink: 0;
+    margin-right: 20px;
+    border-radius: 8px;
 }
 
 .about-text {
@@ -45,3 +45,26 @@ img {
 .about-container li {
     margin-bottom: 10px;
 }
+
+@media (max-width: 768px) {
+  .about-container {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .about-image {
+    width: 80vw;
+    margin-right: 0;
+    margin-bottom: 20px;
+    aspect-ratio: auto; /* убираем фиксированное соотношение, чтобы подстраивалось */
+  }
+
+  .about-text {
+    width: 100%;
+  }
+
+  .about-title {
+    text-align: center;
+  }
+}
+

@@ -1,82 +1,293 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
+import { useLocation } from 'react-router-dom';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import Cookies from 'js-cookie';
-import { Form, Input, Button, Upload, message, Alert, Typography } from 'antd';
-import { UploadOutlined } from '@ant-design/icons';
+import { Button, message, Alert, Typography, Spin } from 'antd';
+import ProjectSurvey, { ProjectSurveyRef }  from './ProjectSurvey';
+import ProjectHeader from './ProjectHeader';
+import TeamInfo from './TeamInfo';
 
 const { Paragraph } = Typography;
 
-export const ProjectsContent: React.FC = () => {
-    const { teamId } = useParams<{ teamId: string }>(); // Получаем teamId из URL
+interface Campaign {
+  id: number;
+  title: string;
+  description: string;
+  start_date: string;
+  end_date: string;
+  image_url: string;
+//   winner_announcement_date?: string;
+}
+
+interface TeamMember {
+    name: string;
+    surname: string;
+    role?: string; // добавили роль
+    mentor: string; 
+}
+
+interface ProjectsContentProps {
+  winnerPublic?: boolean;
+}
+
+export const ProjectsContent: React.FC<ProjectsContentProps>  = ({ winnerPublic }) => {
+    const { teamId, projectId } = useParams<{ teamId?: string; projectId?: string }>(); // Получаем teamId из URL
     const [projectData, setProjectData] = useState<any>(null);
     const [teamMembers, setTeamMembers] = useState<{ name: string; surname: string }[]>([]); // Список участников
     const [userRole, setUserRole] = useState<string>(''); // Сохраняем роль пользователя
     const [isSubmitting, setIsSubmitting] = useState<boolean>(false); // Статус отправки
+    const surveyRef = useRef<ProjectSurveyRef>(null);
+    const [isDisabled, setIsDisabled] = useState<boolean>(false)
+    const [uploadedFileName, setUploadedFileName] = useState<string | null>(null);
+    const [campaign, setCampaign] = useState<Campaign | null>(null);
+    const [mentor, setMentor] = useState<TeamMember | null>(null);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
+    
+    
+    const onFileUploaded = (filename: string, fileUrl: string) => {
+        setUploadedFileName(filename);
+    };
+
+    // useEffect(() => {
+        // const fetchProjectData = async () => {
+        //     const token = Cookies.get('token');
+        //     try {
+        //         const response = await axios.get(`http://127.0.0.1:5000/team/${teamId}`, {
+        //             headers: {
+        //                 'Authorization': `Bearer ${token}`
+        //             }
+        //         });
+
+        //         setProjectData(response.data.project);
+        //         setTeamMembers(response.data.team_members);
+        //         setUserRole(response.data.user_role);
+        //         // ⬇️ правильная логика выделения наставника
+        //         if (response.data.team_members) {
+        //             const mentorMember = response.data.team_members.find((m: any) => m.role === 'наставник');
+        //             setMentor(mentorMember || null);
+        //         }
+
+        //     } catch (error) {
+        //         console.error('Ошибка загрузки данных проекта и команды:', error);
+        //     }
+        // };
+        useEffect(() => {
+            const fetchProjectData = async () => {
+                setLoading(true);
+                setError(null);
+                try {
+                let url = '';
+                const token = Cookies.get('token');
+
+                if (winnerPublic && projectId) {
+                    url = `http://127.0.0.1:5000/api/projects/${projectId}`;
+                } else if (teamId) {
+                    url = `http://127.0.0.1:5000/team/${teamId}`;
+                } else return;
+
+                const headers: any = {};
+                if (!winnerPublic && token) headers['Authorization'] = `Bearer ${token}`;
+
+                const response = await axios.get(url, { headers });
+
+                if (winnerPublic) {
+                    setProjectData(response.data.project);
+                    setTeamMembers(response.data.members);
+                    setMentor(response.data.mentor || null);
+                } else {
+                    setProjectData(response.data.project);
+                    setTeamMembers(response.data.team_members);
+                    setUserRole(response.data.user_role);
+                    const mentorMember = response.data.team_members.find((m: any) => m.role === 'наставник');
+                    setMentor(mentorMember || null);
+                }
+                } catch (err: any) {
+                console.error("Ошибка загрузки:", err);
+                if (err.response?.status === 403) {
+                    setError("Этот проект недоступен для публичного просмотра (он не является победителем).");
+                } else if (err.response?.status === 404) {
+                    setError("Проект не найден.");
+                } else {
+                    setError("Ошибка при загрузке проекта. Попробуйте позже.");
+                }
+                } finally {
+                setLoading(false);
+                }
+            };
+                fetchProjectData();
+            }, [teamId, projectId, winnerPublic]);
+
 
     useEffect(() => {
-        const fetchProjectData = async () => {
-            const token = Cookies.get('token');
+        const fetchCampaign = async () => {
+            if (!projectData || !projectData.campaign_id) return;
+
             try {
-                // Делаем запрос к эндпоинту для получения данных проекта и участников команды
-                const response = await axios.get(`http://127.0.0.1:5000/team/${teamId}`, {
+                const response = await fetch(`http://127.0.0.1:5000/campaigns/${projectData.campaign_id}`, {
+                    method: 'GET',
                     headers: {
-                        'Authorization': `Bearer ${token}`
-                    }
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${Cookies.get('token') || ''}`,
+                    },
                 });
 
-                // Сохраняем данные проекта и участников в стейт
-                setProjectData(response.data.project);
-                setTeamMembers(response.data.team_members);
-                setUserRole(response.data.user_role);
+                if (!response.ok) {
+                    throw new Error(`Ошибка ${response.status}`);
+                }
+
+                const data: Campaign = await response.json();
+                setCampaign(data);
             } catch (error) {
-                console.error('Ошибка загрузки данных проекта и команды:', error);
+                console.error('Ошибка при загрузке кампании:', error);
+                setCampaign(null);
             }
         };
 
-        fetchProjectData();
-    }, [teamId]);
+        fetchCampaign();
+    }, [projectData]); // ✅ безопасная подписка
 
-    const handleSubmit = async (values: { comment: string; file: any }) => {
-        const token = Cookies.get('token');
-        const formData = new FormData();
-        formData.append('comment', values.comment);
-        if (values.file && values.file.fileList.length > 0) {
-            formData.append('file', values.file.fileList[0].originFileObj);
+    
+    useEffect(() => {
+        if (projectData) {
+            if (
+                projectData?.status === "yes" || 
+                projectData?.description === "yes" || 
+                projectData?.description === "no"
+            ) {
+                setIsDisabled(true)
+            }
         }
+    }, [projectData]);
 
-        try {
-            await axios.post(`http://127.0.0.1:5000/upload/${teamId}`, formData, {
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                    'Content-Type': 'multipart/form-data'
-                }
-            });
-            message.success('Файл успешно загружен');
-        } catch (error) {
-            console.error('Ошибка при загрузке файла:', error);
-            message.error('Ошибка при загрузке файла');
-        }
-    };
-
-    const handleProjectSubmit = () => {
+    const handleProjectSubmit = async () => {
         if (userRole === 'участник') {
-            message.error('Только наставник может отправить проект. Добавьте наставника в команду или попросите его отправить проект.');
-        } else if (userRole === '?наставник') {
-            message.error('Подтвердите ваш статус наставника. Напишите на support@russiaishere.ru.');
-        } else if (userRole === 'наставник') {
-            // Логика отправки проекта
-            setIsSubmitting(true);
-            message.success('Проект отправлен!');
-            setIsSubmitting(false);
+            message.error('Только наставник может отправить проект.');
+            return;
         }
+
+        if (userRole === '?наставник') {
+            message.error('Подтвердите ваш статус наставника.');
+            return;
+        }
+
+        if (!surveyRef.current?.validateSurvey()) {
+            message.error('Пожалуйста, заполните все поля перед отправкой проекта.');
+            return;
+        }
+
+        // ✅ Проверка наличия файла
+        try {
+            const token = Cookies.get('token');
+            const response = await axios.get(`http://127.0.0.1:5000/get_project_file?team_id=${teamId}`, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+            });
+
+            const fileData = response.data;
+            if (!fileData.filename) {
+            message.error('Перед отправкой необходимо загрузить файл проекта.');
+            return;
+            }
+        } catch (error) {
+            console.error('Ошибка при проверке файла проекта:', error);
+            message.error('Не удалось проверить наличие файла. Попробуйте позже.');
+            return;
+        }
+
+        // ✅ Продолжение отправки проекта
+        try {
+            setIsSubmitting(true);
+            const surveyData = surveyRef.current.getSurveyData();
+            const token = Cookies.get('token');
+
+            await axios.post('http://127.0.0.1:5000/api/save-answers', {
+            team_id: teamId,
+            answers: surveyData,
+            }, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
+            });
+
+            await axios.post(`http://127.0.0.1:5000/api/set-project-status`, {
+            team_id: teamId,
+            status: "yes"
+            }, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
+            });
+
+            message.success('Проект успешно отправлен!');
+            setTimeout(() => {
+            window.location.reload();
+            }, 1500);
+        } catch (err) {
+            console.error(err);
+            message.error('Ошибка при отправке проекта');
+        } finally {
+            setIsSubmitting(false);
+        }    
     };
+
+    // сразу в рендере, перед return JSX
+    if (loading) {
+        return (
+            <div style={{ display: "flex", justifyContent: "center", padding: "50px" }}>
+            <Spin size="large" tip="Загрузка..." />
+            </div>
+        );
+    }
+
+    if (error) {
+        return (
+            <Alert
+            message="Ошибка"
+            description={error}
+            type="error"
+            showIcon
+            style={{ margin: 20 }}
+            />
+        );
+    }
+
 
     return (
         <div>
+            <Spin spinning={!projectData}></Spin>
             <div></div>
-            <h2>Моя команда: {projectData?.title}</h2>
-            {/* <p>Описание: {projectData?.description}</p> */}
+            {campaign && <ProjectHeader campaign={campaign} />}
+            
+            {/* {campaign && (
+            <div
+                style={{
+                width: '100%',
+                height: '550px',
+                overflow: 'hidden',
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                marginBottom: '24px',
+                }}
+            >
+                <img
+                src={http://127.0.0.1:5000${campaign.image_url}}
+                alt={campaign.title}
+                style={{
+                    width: '100%',
+                    height: '100%',
+                    objectFit: 'cover',
+                }}
+                />
+            </div>
+            )} */}
+
+            {/* <h2>Моя команда: {projectData?.title}</h2>
             <h2>Участники команды</h2>
             <ul>
                 {teamMembers.map((member, index) => (
@@ -85,35 +296,61 @@ export const ProjectsContent: React.FC = () => {
                     </li>
                 ))}
             </ul>
+            <h2>Пригласить в команду: {projectData?.project_code ?? '—'}</h2> */}
+
+            {projectData?.description === 'yes' && (
+                <Alert
+                    message="Поздравляем!"
+                    description="Ваш проект признан победителем. Отличная работа всей команды!"
+                    type="success"
+                    showIcon
+                    style={{ marginBottom: 20 }}
+                />
+            )}
+
+            {projectData?.description === 'no' && (
+                <Alert
+                    message="Благодарим за участие"
+                    description="Ваш проект не был выбран победителем, но вы проделали отличную работу. Удачи в следующий раз!"
+                    type="info"
+                    showIcon
+                    style={{ marginBottom: 20 }}
+                />
+            )}
+
+            {projectData && (
+                <TeamInfo
+                    teamName={projectData.title}
+                    mentor={mentor} // или доставай из API
+                    members={teamMembers}
+                    projectCode={projectData.project_code}
+                />
+            )}
 
             <h2>Создание проекта</h2>
-            <Form onFinish={handleSubmit}>
-                <Form.Item
-                    name="comment"
-                    rules={[{ required: true, message: 'Пожалуйста, введите комментарий!' }]}
-                >
-                    <Input placeholder="Опишите вашу идею" />
-                </Form.Item>
-                <Form.Item name="file">
-                    <Upload beforeUpload={() => false}>
-                        <Button icon={<UploadOutlined />}>Прикрепить файл</Button>
-                    </Upload>
-                </Form.Item>
-                <Form.Item>
-                    <Button type="primary" htmlType="submit">
-                        Сохранить
-                    </Button>
-                </Form.Item>
-            </Form>
+
+            {projectData && (
+                <ProjectSurvey ref={surveyRef} status={projectData?.status} winnerStatus={projectData.description}/>
+            )}
 
             {userRole === 'наставник' ? (
-                <Button type="primary" onClick={handleProjectSubmit} loading={isSubmitting}>
+                <Button type="primary" onClick={handleProjectSubmit} loading={isSubmitting} disabled={isDisabled} style={{width: '100%', fontSize: '18px', padding: '1.5rem 0 1.5rem 0', backgroundColor: '#EF3124'}}>
                     Отправить проект
                 </Button>
             ) : (
-                <Button type="primary" disabled>
+                <Button type="primary" disabled style={{width: '100%', fontSize: '18px', padding: '1.5rem 0 1.5rem 0',  backgroundColor: '#EF3124'}}>
                     Отправить проект
                 </Button>
+            )}
+
+            {projectData?.status === 'yes' && projectData?.description === 'InProcess' && (
+                <Alert
+                    message="Вы успешно отправили ваш проект"
+                    description="Ожидайте результаты. Изменения в проекте теперь недоступны."
+                    type="success"
+                    showIcon
+                    style={{ marginTop: 16 }}
+                />
             )}
 
             {userRole === 'участник' && (

@@ -1,0 +1,32 @@
+.stats-container {
+  display: flex;
+  justify-content: center;
+  gap: 5rem;
+  margin-top: 5rem;
+  margin-bottom: 5rem;
+  flex-wrap: wrap;
+}
+
+.stats-block {
+  text-align: center;
+}
+
+.stats-label {
+  margin-bottom: 0.5rem;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.stats-value {
+  font-family: 'Inter', sans-serif;
+  font-weight: 700;
+  font-size: 58px;
+  line-height: 58px;
+  color: #EF3124;
+}
+
+.campaign-title {
+    text-align: center;
+    font-size: 35px;
+    margin-top: 0;
+}

@@ -19,6 +19,7 @@ def init_db():
     db_projects_path = os.path.join('data', 'projects.db')
     db_teams_path = os.path.join('data', 'teams.db')
     db_team_members_path = os.path.join('data', 'team_members.db')
+    db_news_path = os.path.join('data', 'news.db')
     
     connection = sqlite3.connect('database.db')
     cursor = connection.cursor()
@@ -46,6 +47,8 @@ def init_db():
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         title TEXT NOT NULL,
         description TEXT,
+        full_description TEXT,
+        rules TEXT,
         start_date DATE,
         end_date DATE,
         created_by INTEGER,
@@ -60,9 +63,13 @@ def init_db():
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             project_code TEXT,
             title TEXT NOT NULL,
-            description TEXT,
+            description TEXT DEFAULT 'InProcess',
             campaign_id INTEGER,
             team_id INTEGER,
+            answers TEXT DEFAULT '{}',
+            status TEXT DEFAULT 'InProcess',
+            file TEXT,
+            file_design TEXT,
             FOREIGN KEY (campaign_id) REFERENCES Campaigns(id),
             FOREIGN KEY (team_id) REFERENCES Teams(id)
         )
@@ -90,6 +97,18 @@ def init_db():
             PRIMARY KEY (team_id, user_id)
         )
     '''
+
+    create_news_table = '''
+        CREATE TABLE IF NOT EXISTS News (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            title TEXT NOT NULL,
+            text TEXT NOT NULL,
+            date TEXT NOT NULL,
+            file TEXT NOT NULL,
+            status TEXT DEFAULT 'yes'
+        )
+    '''
+
     
     # Создаем таблицы в отдельных файлах базы данных
     create_table(db_users_path, create_users_table)
@@ -97,6 +116,7 @@ def init_db():
     create_table(db_projects_path, create_projects_table)
     create_table(db_teams_path, create_teams_table)
     create_table(db_team_members_path, create_team_members_table)
+    create_table(db_news_path, create_news_table)
 
     print("Базы данных успешно созданы в папке data")
 

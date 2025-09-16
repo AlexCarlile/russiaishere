@@ -1,3 +1,85 @@
 .demo-logo:hover {
     cursor: pointer;
 }
+
+.content-container {
+    padding: 48px 48px;
+}
+
+@media (max-width: 992px) {
+    .content-container {
+        padding: 0;
+    }
+}
+
+/* Скрываем кнопку бургер и мобильное меню по умолчанию */
+.mobile-menu-button {
+  display: none;
+}
+
+/* Десктопное меню показываем по умолчанию */
+.desktop-menu {
+  display: flex;
+}
+
+.desktop-personnel {
+  display: block;
+}
+
+@media (max-width: 768px) {
+  .desktop-personnel {
+    display: none; /* прячем Personnel в хедере на мобилках */
+  }
+}
+
+
+/* Адаптация под мобилку */
+@media (max-width: 768px) {
+  .mobile-menu-button {
+    display: inline-block !important;
+  }
+  .desktop-menu {
+    display: none !important;
+  }
+  .content-container {
+    padding: 0 !important;
+  }
+}
+
+/* Скрыть десктопное меню и Personnel на мобильных */
+@media (max-width: 992px) {
+  .desktop-menu {
+    display: none;
+  }
+  .desktop-personnel {
+    display: none;
+  }
+  .mobile-menu-button {
+    display: inline-block;
+  }
+}
+
+/* Скрыть кнопку меню на десктопе */
+@media (min-width: 993px) {
+  .mobile-menu-button {
+    display: none;
+  }
+}
+
+/* Центрируем пункты меню в Drawer (вертикальное меню) */
+.ant-drawer-body .ant-menu-vertical {
+  text-align: center;
+  width: 100%;
+}
+
+.ant-drawer-body .ant-menu-vertical .ant-menu-item {
+  justify-content: center; /* Выравниваем пункты по центру */
+}
+
+/* Растягиваем Personnel по ширине */
+.drawer-personnel-container {
+  padding: 16px;
+  width: 100%;
+  box-sizing: border-box; /* Чтобы padding не ломал ширину */
+}
+

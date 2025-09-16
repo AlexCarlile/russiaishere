@@ -1,0 +1,200 @@
+/* Обёртка фонового блока */
+.project-header {
+  position: relative;
+  width: 100%;
+  height: 550px;
+  border-radius: 32px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  margin-bottom: 40px;
+}
+
+.project-header__bg {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  top: 0;
+  left: 0;
+  z-index: 0;
+}
+
+.project-header__overlay {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0,0,0,0.2);
+  z-index: 1;
+}
+
+/* Красная карточка */
+.project-header__card {
+  position: relative;
+  background-color: #E53935;
+  color: white;
+  border-radius: 24px;
+  padding: 24px;
+  max-width: 430px;
+  margin-left: 40px;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  box-shadow: 0 15px 30px rgba(0,0,0,0.2);
+}
+
+.project-header__badge {
+  background-color: rgba(255, 255, 255, 0.3);
+  padding: 6px 14px;
+  border-radius: 999px;
+  font-size: 14px;
+  display: inline-block;
+}
+
+.project-header__title {
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 1.4;
+}
+
+.project-header__dates {
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.project-header__desc {
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.5;
+}
+
+.project-header__winners {
+  font-size: 14px;
+  font-weight: 700;
+  margin-top: 8px;
+}
+
+/* Прогресс-бар */
+.project-header__progress {
+  margin-top: 16px;
+  background-color: rgba(255,255,255,0.3);
+  height: 8px;
+  border-radius: 8px;
+  position: relative;
+  overflow: hidden;
+}
+
+.project-header__progress-bar {
+  width: 25%; /* динамически подставляется */
+  background-color: white;
+  height: 100%;
+  border-radius: 8px;
+}
+
+/* Всплывающий аватар наставника (лупа) */
+.project-header__mentor-avatar {
+  position: absolute;
+  right: -20px;
+  bottom: -20px;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 4px solid white;
+  box-shadow: 0 0 0 3px rgba(0,0,0,0.15);
+  z-index: 3;
+}
+
+/* Адаптация */
+@media (max-width: 768px) {
+  .project-header {
+    height: auto;
+    flex-direction: column;
+  }
+
+  .project-header__card {
+    margin: 24px;
+    max-width: 90%;
+  }
+
+  .project-header__mentor-avatar {
+    right: 12px;
+    bottom: -28px;
+    width: 48px;
+    height: 48px;
+  }
+}
+
+/* TEAM INFO */
+.team-section {
+  /* margin-top: 60px; */
+  align-self: center;
+}
+
+.team-section__title {
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 24px;
+}
+
+.team-section__block {
+  margin-bottom: 12px;
+}
+
+.team-section__label {
+  font-size: 16px;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 2px;
+}
+
+.team-section__value {
+  font-size: 18px;
+  font-weight: 500;
+  color: #000;
+}
+
+.team-section__avatars {
+  display: flex;
+  gap: 16px;
+  margin-top: 28px;
+}
+
+.team-section__avatar {
+  width: 128px;
+  height: 128px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #ec4899, #f59e0b);
+  display: flex;
+  align-items: center;
+  text-align: center;
+  justify-content: center;
+  font-size: 24px;
+}
+
+.flex {
+    display: flex;
+}
+
+.team-block {
+    align-items: center;
+    justify-content: space-between;
+}
+
+.team-details {
+  gap: 60px;
+}
+
+.team-micro-block {
+  flex-direction: row;
+}
+
+.copyable-code:hover {
+  color: #1890ff;
+}
+
+.team-section__value {
+  margin: 18px 0 18px 0;
+}

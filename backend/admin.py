@@ -1,9 +1,13 @@
 import sqlite3
 from flask import g
 
+
 DATABASE_USERS = 'data/users.db'
 DATABASE_CAMPAIGNS = 'data/campaigns.db'
 DATABASE_PROJECTS = 'data/projects.db'
+DATABASE_TEAMS = 'data/teams.db'
+DATABASE_TEAM_MEMBERS = './data/team_members.db'
+DATABASE_NEWS = './data/news.db'
 
 # Подключение к базе данных пользователей
 def get_db_users():
@@ -19,11 +23,32 @@ def get_db_campaigns():
         db = g._database_campaigns = sqlite3.connect(DATABASE_CAMPAIGNS)
     return db
 
+# Подключение к базе данных команд
+def get_db_teams():
+    db = getattr(g, '_database_teams', None)
+    if db is None:
+        db = g._database_teams = sqlite3.connect(DATABASE_TEAMS)
+    return db
+
+# Подключение к базе данных участников команд
+def get_db_team_members():
+    db = getattr(g, '_database_team_members', None)
+    if db is None:
+        db = g._database_team_members = sqlite3.connect(DATABASE_TEAM_MEMBERS)
+    return db
+
 # Подключение к базе данных проектов
 def get_db_projects():
     db = getattr(g, '_database_projects', None)
     if db is None:
         db = g._database_projects = sqlite3.connect(DATABASE_PROJECTS)
+    return db
+
+def get_db_news():
+    db = getattr(g, '_database_news', None)
+    if db is None:
+        db = g._database_news = sqlite3.connect(DATABASE_NEWS)
+        db.row_factory = sqlite3.Row  # ← добавляем это
     return db
 
 # Закрытие соединения с базой данных
@@ -39,6 +64,10 @@ def close_connection(exception):
     db_projects = getattr(g, '_database_projects', None)
     if db_projects is not None:
         db_projects.close()
+    
+    db_news = getattr(g, '_database_news', None)
+    if db_news is not None:
+        db_news.close()
 
 # Эндпоинт для получения пользователей
 def fetch_users():
@@ -53,14 +82,55 @@ def fetch_users():
 
 # Эндпоинт для получения акций
 def fetch_campaigns():
-    db = get_db_campaigns()
-    cursor = db.cursor()
+    db_campaigns = get_db_campaigns()
+    cursor = db_campaigns.cursor()
     cursor.execute("SELECT * FROM Campaigns")
     campaigns = cursor.fetchall()
-    return [{'id': row[0], 'title': row[1], 'description': row[2], 
-             'start_date': row[3], 'end_date': row[4], 
-             'created_by': row[5], 'image_path': row[6], 
-             'approval_status': row[7]} for row in campaigns]
+
+    db_teams = get_db_teams()
+    team_cursor = db_teams.cursor()
+
+    result = []
+    for row in campaigns:
+        campaign_id = row[0]
+
+        # Подсчёт количества команд для каждой акции
+        team_cursor.execute("SELECT COUNT(*) FROM Teams WHERE campaign_id = ?", (campaign_id,))
+        team_count = team_cursor.fetchone()[0]
+
+        result.append({
+            'id': row[0],
+            'title': row[1],
+            'description': row[2],
+            'full_description': row[3],
+            'rules': row[4],
+            'start_date': row[5],
+            'end_date': row[6],
+            'created_by': row[7],
+            'image_path': row[8],
+            'approval_status': row[9],
+            'team_count': team_count  # ← добавляем сюда
+        })
+
+    return result
+
+# Эндпоинт для получения команд
+def fetch_teams():
+    db = get_db_teams()
+    cursor = db.cursor()
+    cursor.execute("SELECT * FROM Teams")
+    teams = cursor.fetchall()
+    return [{'id': row[0], 'name': row[1], 'campaign_id': row[2], 
+             'created_by': row[3]} for row in teams]
+
+# Эндпоинт для получения участников команд
+def fetch_team_members():
+    db = get_db_team_members()
+    cursor = db.cursor()
+    cursor.execute("SELECT * FROM Team_Members")
+    team_members = cursor.fetchall()
+    return [{'team_id': row[0], 'user_id': row[1], 'name': row[2], 
+             'surname': row[3], 'campaign_id': row[4]} for row in team_members]
 
 # Эндпоинт для получения проектов
 def fetch_projects():
@@ -68,6 +138,31 @@ def fetch_projects():
     cursor = db.cursor()
     cursor.execute("SELECT * FROM Projects")
     projects = cursor.fetchall()
-    return [{'id': row[0], 'project_code': row[1], 'title': row[2], 
-             'description': row[3], 'campaign_id': row[4], 
-             'team_id': row[5]} for row in projects]
+
+    result = []
+    for row in projects:
+        row = list(row)  # на всякий случай
+
+        result.append({
+            'id': row[0],
+            'project_code': row[1],
+            'title': row[2],
+            'description': row[3],
+            'campaign_id': row[4],
+            'team_id': row[5],
+            'answers': row[6] if len(row) > 6 else None,
+            'status': row[7] if len(row) > 7 else None,
+            'file': row[8] if len(row) > 8 else None,
+            'file_design': row[9] if len(row) > 9 else None,
+        })
+
+    return result
+
+# Эндпоинт для получения команд
+def fetch_news():
+    db = get_db_news()
+    cursor = db.cursor()
+    cursor.execute("SELECT * FROM News")
+    rows = cursor.fetchall()
+    return [dict(row) for row in rows]
+

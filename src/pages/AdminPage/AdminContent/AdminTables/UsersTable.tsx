@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { MaterialReactTable, useMaterialReactTable } from 'material-react-table';
-import { Modal, Form, Input, Select, Button, message } from 'antd';
 import axios from 'axios';
+import { saveAs } from 'file-saver'; // установи пакет через npm i file-saver
 
 interface User {
     id: number;
@@ -18,18 +18,20 @@ interface User {
     file: string;
 }
 
+interface UsersTableProps {
+  emailFilter?: string | null;
+}
+
 const roles = ['админ', 'участник', 'наставник', '?наставник', 'модератор'];
 
-export const UsersTable: React.FC = () => {
+export const UsersTable: React.FC<UsersTableProps> = ({ emailFilter }) => {
     const [users, setUsers] = useState<User[]>([]);
-    const [passwords, setPasswords] = useState<{ [key: number]: string }>({}); // Состояние для хранения паролей
-    const [selectedUser, setSelectedUser] = useState<User | null>(null); // Выбранный пользователь
-    const [isModalVisible, setIsModalVisible] = useState(false);
-    const [form] = Form.useForm();
+    const [filteredUsers, setFilteredUsers] = useState<User[]>([]);
 
+    // Вынес функция сюда, в тело компонента
     const fetchUsers = async () => {
         try {
-            const response = await axios.get('http://127.0.0.1:5000/api/users');
+            const response = await axios.get(`http://127.0.0.1:5000/api/users`);
             setUsers(response.data);
         } catch (error) {
             console.error('Error fetching users:', error);
@@ -40,56 +42,109 @@ export const UsersTable: React.FC = () => {
         fetchUsers();
     }, []);
 
+    useEffect(() => {
+    if (emailFilter) {
+        setFilteredUsers(users.filter(user => user.email === emailFilter));
+    } else {
+        setFilteredUsers(users);
+    }
+    }, [emailFilter, users]);
 
-    const handleRowClick = (user: User) => {
-        setSelectedUser(user);
-        form.setFieldsValue(user);
-        setIsModalVisible(true);
-    };
+    const handleDelete = async (userId: number) => {
+        const confirmDelete = window.confirm('Вы точно уверены, что хотите удалить пользователя?');
 
-    const updateUser = async (userId: number, newRole: string) => {
+        if (!confirmDelete) return;
+
         try {
-            const newPassword = passwords[userId]; // Получаем новый пароль для пользователя
-            const data: any = { role: newRole }; // Объект для обновления
+            await axios.delete(`http://127.0.0.1:5000/api/users/${userId}`);
+            setUsers(prev => prev.filter(user => user.id !== userId));
+            alert('Пользователь успешно удалён');
+        } catch (error) {
+            console.error('Ошибка при удалении пользователя:', error);
+            alert('Ошибка при удалении пользователя');
+        }
+    };
+    
+    const updateUser = async (userId: number, updateData: Partial<User>) => {
+        setUsers(prevUsers =>
+            prevUsers.map(user =>
+                user.id === userId ? { ...user, ...updateData } : user
+            )
+        );
 
-            if (newPassword) {
-                data.password = newPassword; // Добавляем пароль, если он есть
-            }
-
-            await axios.put(`http://127.0.0.1:5000/api/users/${userId}`, data);
-            
-            setUsers(prevUsers => 
-                prevUsers.map(user => 
-                    user.id === userId ? { ...user, role: newRole, password: newPassword || user.password } : user
-                )
-            );
+        try {
+            await axios.put(`http://127.0.0.1:5000/api/users/${userId}`, updateData);
             alert('Данные пользователя успешно обновлены');
+            fetchUsers();
         } catch (error) {
-            console.error('Error updating user:', error);
+            console.error('Ошибка обновления пользователя:', error);
+            alert('Ошибка при обновлении');
         }
     };
 
-
-    const handleSave = async () => {
+    // Фильтруем users по email, если есть фильтр
+    useEffect(() => {
+    const fetchFilteredUsers = async () => {
         try {
-            const updatedUser = form.getFieldsValue();
-            await axios.put(`http://127.0.0.1:5000/api/users/${updatedUser.id}`, updatedUser);
-            setUsers(prevUsers => 
-                prevUsers.map(user => (user.id === updatedUser.id ? updatedUser : user))
-            );
-            message.success('Данные пользователя успешно обновлены');
-            setIsModalVisible(false);
-            setSelectedUser(null);
+        const url = emailFilter
+            ? `http://127.0.0.1:5000/api/users?email=${encodeURIComponent(emailFilter)}`
+            : `http://127.0.0.1:5000/api/users`;
+        const response = await axios.get(url);
+        setUsers(response.data);
         } catch (error) {
-            console.error('Error updating user:', error);
-            message.error('Ошибка при обновлении данных пользователя');
+        console.error('Error fetching users:', error);
         }
     };
+    fetchFilteredUsers();
+    }, [emailFilter]);
+
+    const dataToShow = users; 
 
     const columns = [
+        { 
+            header: 'Действия', 
+            id: 'actions',
+            Cell: ({ row }: any) => (
+                <button
+                onClick={() => handleDelete(row.original.id)}
+                style={{
+                    backgroundColor: 'red',
+                    color: 'white',
+                    padding: '5px 10px',
+                    border: 'none',
+                    borderRadius: '4px',
+                    cursor: 'pointer'
+                }}
+                >
+                Удалить
+                </button>
+            )
+        },
         { header: 'ID', accessorKey: 'id' },
-        { header: 'Email', accessorKey: 'email' },
-        { header: 'Пароль', accessorKey: 'password' },
+        { header: 'Email', accessorKey: 'email', enableColumnFilter: true },
+        {
+            header: 'Пароль',
+            accessorKey: 'password',
+            Cell: ({ cell }: any) => {
+                const [password, setPassword] = useState(cell.getValue() as string);
+
+                const handleBlur = () => {
+                if (password !== cell.getValue()) {
+                    updateUser(cell.row.original.id, { password }); // Отправляем только при изменении
+                }
+                };
+
+                return (
+                <input
+                    type="text"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    onBlur={handleBlur}
+                    style={{ width: '100%' }}
+                />
+                );
+            }
+        },
         { header: 'Имя', accessorKey: 'name' },
         { header: 'Фамилия', accessorKey: 'surname' },
         { header: 'Регион', accessorKey: 'region' },
@@ -101,7 +156,7 @@ export const UsersTable: React.FC = () => {
             Cell: ({ cell }: any) => (
                 <select
                 value={cell.getValue() as string}
-                onChange={(e) => updateUser(cell.row.original.id, e.target.value)}
+                onChange={(e) => updateUser(cell.row.original.id, { role: e.target.value })}
                 >
                     {roles.map(role => (
                         <option key={role} value={role}>{role}</option>
@@ -116,66 +171,66 @@ export const UsersTable: React.FC = () => {
 
     const table = useMaterialReactTable({
         columns,
-        data: users,
+        data: filteredUsers,
         enableRowSelection: true,
         enableColumnOrdering: true,
         enableGlobalFilter: false,
     });
 
+    // Функция для преобразования данных в CSV
+    const convertToCSV = (data: User[]) => {
+        const header = [
+        'ID', 'Email', 'Пароль', 'Имя', 'Фамилия', 'Регион', 
+        'Город', 'Школа', 'Роль', 'Согласие ПД', 'Дата регистрации', 'Имя файла наставника'
+        ];
+        const rows = data.map(user => [
+        user.id, user.email, user.password, user.name, user.surname, user.region,
+        user.localty, user.school, user.role, user.agreement, user.currentDate, user.file
+        ]);
+
+        const csvContent =
+        [header, ...rows]
+            .map(e => e.map(v => `"${(v ?? '').toString().replace(/"/g, '""')}"`).join(','))
+            .join('\n');
+
+        return csvContent;
+    };
+
+    // Обработчик клика по кнопке
+    const handleDownload = () => {
+        // ВАЖНО: скачать именно все данные из БД, а не отфильтрованные на клиенте
+        axios.get('http://127.0.0.1:5000/api/users') // без фильтра, все данные
+        .then(response => {
+            const csv = convertToCSV(response.data);
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            saveAs(blob, 'users_export.csv');
+        })
+        .catch(err => {
+            alert('Ошибка при скачивании данных');
+            console.error(err);
+        });
+    };
+
     return (
         <>
-            <MaterialReactTable
-                columns={columns}
-                data={users}
-                renderRowActions={({ row }) => (
-                    <Button type="link" onClick={() => handleRowClick(row.original)}>
-                        Редактировать
-                    </Button>
-                )}
-            />
-            <Modal
-                title="Редактирование пользователя"
-                visible={isModalVisible}
-                onCancel={() => setIsModalVisible(false)}
-                footer={[
-                    <Button key="cancel" onClick={() => setIsModalVisible(false)}>
-                        Отмена
-                    </Button>,
-                    <Button key="save" type="primary" onClick={handleSave}>
-                        Сохранить
-                    </Button>,
-                ]}
+            <button
+                style={{
+                    marginBottom: '20px',
+                    padding: '10px 20px',
+                    borderRadius: '10px',
+                    border: 'none',
+                    backgroundColor: '#EF3124',
+                    color: 'white',
+                    cursor: 'pointer'
+                }}
+                onClick={handleDownload}
             >
-                <Form form={form} layout="vertical">
-                    <Form.Item name="email" label="Email">
-                        <Input disabled />
-                    </Form.Item>
-                    <Form.Item name="name" label="Имя" rules={[{ required: true, message: 'Пожалуйста, введите имя' }]}>
-                        <Input />
-                    </Form.Item>
-                    <Form.Item name="surname" label="Фамилия" rules={[{ required: true, message: 'Пожалуйста, введите фамилию' }]}>
-                        <Input />
-                    </Form.Item>
-                    <Form.Item name="region" label="Регион">
-                        <Input />
-                    </Form.Item>
-                    <Form.Item name="locality" label="Город">
-                        <Input />
-                    </Form.Item>
-                    <Form.Item name="school" label="Школа">
-                        <Input />
-                    </Form.Item>
-                    <Form.Item name="role" label="Роль">
-                        <Select>
-                            {roles.map(role => (
-                                <Select.Option key={role} value={role}>
-                                    {role}
-                                </Select.Option>
-                            ))}
-                        </Select>
-                    </Form.Item>
-                </Form>
-            </Modal>
+                Скачать все данные (CSV)
+            </button>
+
+            <MaterialReactTable
+                table={table}
+            />
         </>
     )
 }

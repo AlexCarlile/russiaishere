@@ -1,2 +1,2 @@
-export * from "./NewSection";
+export { NewsSection } from "./NewsSection";
 export * from "./ActionSection";

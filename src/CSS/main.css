@@ -103,16 +103,12 @@ body {
 
 /* login */
 
-.login-check {
+/* .login-check {
     justify-content: space-between;
     align-items: center;
 }
 
 .login-section {
-    /* background-image: url('../img/login-bckg.png');
-    background-position: center;
-    background-repeat: no-repeat;
-    background-size: auto; */
     width: 100%;
     height: 100vh;
 }
@@ -193,5 +189,5 @@ body {
     background-color: #8CB0EC;
     border-radius: 30px;
     color: white;
-}
+} */
 

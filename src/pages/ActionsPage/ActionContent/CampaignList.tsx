@@ -13,10 +13,10 @@ interface CampaignListProps {
     campaigns: any[];
     user: User | null;
     onJoinButtonClick: () => void; // Добавьте обработчик клика на кнопку
-    activeTab: string;
+    // activeTab: string;
 }   
 
-export const CampaignList: React.FC<CampaignListProps> = ({ campaigns, user, onJoinButtonClick, activeTab  }) => {
+export const CampaignList: React.FC<CampaignListProps> = ({ campaigns, user, onJoinButtonClick }) => {
     const [selectedCampaignId, setSelectedCampaignId] = useState<number | null>(null);
     const [isTeamModalVisible, setIsTeamModalVisible] = useState(false);
     const [isCreateTeam, setIsCreateTeam] = useState(true);
@@ -84,27 +84,84 @@ export const CampaignList: React.FC<CampaignListProps> = ({ campaigns, user, onJ
 
     return (
         <div>
-            <div style={{ display: 'flex', justifyContent: 'flex-start', flexWrap: 'wrap', width: '100%' }}>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '60px', justifyContent: 'space-between'}}>
                 {campaigns.map((campaign) => (
-                    <div key={campaign.id} style={{ width: '300px', marginRight: '20px' , border: '1px solid #D6E6FF', borderRadius : '48px', padding: '1rem', marginBottom: '1rem', backgroundColor: '#D6E6FF' }}>
-                        <h3>{campaign.title}</h3>
-                        <p>{campaign.description}</p>
-                        <p>
-                            Дата начала: {new Date(campaign.start_date).toLocaleDateString()}, Дата окончания:{' '}
-                            {new Date(campaign.end_date).toLocaleDateString()}
-                        </p>
-                        {campaign.image_url && <img src={`http://127.0.0.1:5000${campaign.image_url}`} alt={campaign.title} style={{ maxWidth: '100%' }} />}
-                        {(user && (user.role === 'участник' || user.role === 'наставник' || user.role === '?наставник') && activeTab === 'current') ? (
-                            <Button onClick={() => handleParticipateClick(campaign.id)}>
-                                Участвовать
-                            </Button>
-                        ) : (
-                            !user && activeTab === 'current' && (
-                                <Button onClick={() => navigate('/login')}>
+                    <div 
+                        key={campaign.id} 
+                        style={{ 
+                            position: 'relative',
+                            width: '620px',
+                            height: '450px',
+                            borderRadius: '32px',
+                            overflow: 'hidden',
+                            backgroundColor: '#f0f0f0',
+                            // boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
+                            backgroundImage: `url(http://127.0.0.1:5000${campaign.image_url})`,
+                            backgroundSize: 'cover',
+                            backgroundPosition: 'center',
+                            display: 'flex',
+                            alignItems: 'flex-end',
+                            cursor: 'pointer',
+                        }}
+                        onClick={() => navigate(`/actions/${campaign.id}`)}
+                    >
+                        <div
+                            style={{
+                                backgroundColor: '#f44336',
+                                color: '#fff',
+                                padding: '1rem',
+                                borderRadius: '24px',
+                                margin: '1rem',
+                                minWidth: '80%',
+                                minHeight: '50%',
+                                maxWidth: 'calc(100% - 2rem)',
+                                width: '80%',
+                                boxSizing: 'border-box',
+                                display: 'flex',
+                                flexDirection: 'column',
+                                justifyContent: 'space-between',
+                                alignItems: 'start'
+                            }}
+                        >
+                            <div>
+                                <h3 style={{ margin: 0, fontWeight: 'bold' }}>{campaign.title}</h3>
+                                <p style={{ fontSize: '12px', margin: '4px 0', fontWeight: '700' }}>
+                                    {new Date(campaign.start_date).toLocaleDateString()} — {' '}
+                                    {new Date(campaign.end_date).toLocaleDateString()}
+                                </p>
+                            </div>
+                            <p>{campaign.description}</p>
+                            {/* <p style={{ fontSize: '12px', margin: '4px 0' }}>
+                                Дата начала: {new Date(campaign.start_date).toLocaleDateString()}, Дата окончания:{' '}
+                                {new Date(campaign.end_date).toLocaleDateString()}
+                            </p> */}
+                            {/* {campaign.image_url && <img src={`http://127.0.0.1:5000${campaign.image_url}`} alt={campaign.title} style={{ maxWidth: '100%' }} />} */}
+                            {user && (user.role === 'участник' || user.role === 'наставник' || user.role === '?наставник') ? (
+                                <Button 
+                                    onClick={(e: React.MouseEvent) => 
+                                        {
+                                            e.stopPropagation(); // 🚫 Остановить всплытие события, чтобы не сработал onClick карточки
+                                            handleParticipateClick(campaign.id); // твоя логика участия
+                                        }
+                                    }
+                                    style={{ borderRadius: '24px', marginTop: '8px', backgroundColor: '#fff' }}
+                                >
                                     Участвовать
                                 </Button>
-                        )
-                        )}
+                            ) : (
+                                !user && (
+                                    <Button 
+                                        onClick={(e: React.MouseEvent) => {
+                                            e.stopPropagation();
+                                            navigate('/login');
+                                        }}
+                                        style={{ borderRadius: '24px', marginTop: '8px', backgroundColor: '#fff' }}
+                                    >
+                                        Участвовать
+                                    </Button>
+                            )
+                            )}
+                        </div>
                     </div>
                 ))}
             </div>

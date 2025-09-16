@@ -1,3 +1,5 @@
 export { UsersTable } from './UsersTable';
-export { CampaignsTable } from './CampaignsTable';
+export { ActionsTable } from './ActionsTable';
+export { TeamsTable } from './TeamsTable';
 export { ProjectsTable } from './ProjectsTable';
+export { NewsTable } from './NewsTable';

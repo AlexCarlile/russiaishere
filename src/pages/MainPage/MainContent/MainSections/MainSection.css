@@ -1,0 +1,33 @@
+.news-items-vertical {
+  max-height: 600px; /* Настройте под нужную высоту */
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  padding-right: 8px;
+}
+
+/* Стилизация скроллбара — по желанию */
+.news-items-vertical::-webkit-scrollbar {
+  width: 6px;
+}
+
+.news-items-vertical::-webkit-scrollbar-thumb {
+  background-color: #ccc;
+  border-radius: 4px;
+}
+
+.action-section {
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+.action-title {
+  font-size: 28px!important;
+}
+
+@media (max-width: 768px) {
+  .action-title {
+    font-size: 18px!important;
+  }
+}

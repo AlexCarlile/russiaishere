@@ -2,7 +2,11 @@ import React from 'react';
 import { Model } from '../../components';
 import { ProjectsContent } from './ProjectsContent';
 
-export const Projects: React.FC = () => {
+interface ProjectsProps {
+  winnerPublic?: boolean;
+}
+
+export const Projects: React.FC<ProjectsProps> = ({ winnerPublic = false }) => {
     const children = <ProjectsContent/>
 
     return (

@@ -6,3 +6,6 @@ export * from './Personal';
 export * from './PartnersPage';
 export * from './Projects';
 export * from './AdminPage';
+export * from './NewsPage';
+
+
