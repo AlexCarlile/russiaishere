@@ -1,6 +1,6 @@
 import sqlite3
 from flask import g
-
+import os
 
 DATABASE_USERS = 'data/users.db'
 DATABASE_CAMPAIGNS = 'data/campaigns.db'
