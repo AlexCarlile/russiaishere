@@ -56,7 +56,7 @@ export const RegistrationForm: React.FC = () => {
         formData.append('file', rawFile);  // ключ 'file' совпадает с Flask
 
         try {
-            const response = await axios.post('http://127.0.0.1:5000/upload', formData, {
+            const response = await axios.post('http://1180973-cr87650.tw1.ru/upload', formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                 },
@@ -112,7 +112,7 @@ export const RegistrationForm: React.FC = () => {
         
         try {
             // Отправляем данные на сервер
-            const response = await axios.post('http://127.0.0.1:5000/register', dataToSend);
+            const response = await axios.post('http://1180973-cr87650.tw1.ru/register', dataToSend);
             console.log('Registration successful:', response.data);
             message.success('Регистрация прошла успешно');
             setTimeout(() => {
