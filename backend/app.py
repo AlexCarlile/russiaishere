@@ -16,6 +16,8 @@ import traceback
 import boto3
 import uuid
 from werkzeug.utils import secure_filename
+import logging
+import sys
 
 app = Flask(__name__)
 
@@ -1824,6 +1826,19 @@ def serve_static(filename):
 @app.route('/<path:path>')
 def catch_all(path):
     return send_from_directory(app.static_folder, 'index.html')
+
+# Настройка логирования
+logging.basicConfig(
+    level=logging.INFO,          # INFO, DEBUG, ERROR — уровень логов
+    stream=sys.stdout,           # вывод в stdout, чтобы systemd видел
+    format='[%(asctime)s] %(levelname)s in %(module)s: %(message)s'
+)
+
+# Логирование ошибок Flask
+@app.errorhandler(Exception)
+def handle_exception(e):
+    app.logger.error("Unhandled Exception", exc_info=e)
+    return {"error": str(e)}, 500
 
 if __name__ == '__main__':
     init_db()  # Инициализируем базу данных
