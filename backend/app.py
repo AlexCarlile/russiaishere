@@ -16,6 +16,8 @@ import traceback
 import boto3
 import uuid
 from werkzeug.utils import secure_filename
+import logging
+import sys
 
 app = Flask(__name__)
 
@@ -23,8 +25,8 @@ app = Flask(__name__)
 app.config['JWT_SECRET_KEY'] = 'your_jwt_secret_key'
 app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(minutes=1000)  # Устанавливаем время жизни токена
 jwt = JWTManager(app)
-CORS(app, resources={r"/*": {"origins": "http://localhost:3000"}})
-# CORS(app, resources={r"/*": {"origins": "*"}})
+# CORS(app, resources={r"/*": {"origins": "http://localhost:3000"}})
+CORS(app, resources={r"/*": {"origins": "*"}})
 
 # Папка с иконками (например: static/icons)
 ICONS_FOLDER = os.path.join(app.root_path, 'uploads', 'icons')
@@ -1825,7 +1827,20 @@ def serve_static(filename):
 def catch_all(path):
     return send_from_directory(app.static_folder, 'index.html')
 
+# Настройка логирования
+logging.basicConfig(
+    level=logging.INFO,          # INFO, DEBUG, ERROR — уровень логов
+    stream=sys.stdout,           # вывод в stdout, чтобы systemd видел
+    format='[%(asctime)s] %(levelname)s in %(module)s: %(message)s'
+)
+
+# Логирование ошибок Flask
+@app.errorhandler(Exception)
+def handle_exception(e):
+    app.logger.error("Unhandled Exception", exc_info=e)
+    return {"error": str(e)}, 500
+
 if __name__ == '__main__':
     init_db()  # Инициализируем базу данных
-    app.run(port="5000", debug=True)
+    # app.run(port="5000", debug=True)
     # socketio.run(app, host="0.0.0.0", port=5001, debug=True)

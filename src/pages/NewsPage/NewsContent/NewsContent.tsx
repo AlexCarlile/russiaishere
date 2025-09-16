@@ -9,7 +9,7 @@ export const NewsContent: React.FC = () => {
 
     const fetchNews = async () => {
         try {
-            const response = await axios.get('http://127.0.0.1:5000/api/news');
+            const response = await axios.get('http://1180973-cr87650.tw1.ru/api/news');
             const filtered = response.data.filter((item: any) => item.status === 'yes');
             setNews(filtered);
         } catch (error) {
@@ -39,7 +39,7 @@ export const NewsContent: React.FC = () => {
                             borderRadius: '32px',
                             overflow: 'hidden',
                             backgroundColor: '#f0f0f0',
-                            backgroundImage: `url(http://127.0.0.1:5000/uploads/news/${item.file})`,
+                            backgroundImage: `url(http://1180973-cr87650.tw1.ru/uploads/news/${item.file})`,
                             backgroundSize: 'cover',
                             backgroundPosition: 'center',
                             display: 'flex',

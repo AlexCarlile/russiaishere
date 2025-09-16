@@ -11,7 +11,7 @@ export const NewsSection: React.FC = () => {
   useEffect(() => {
     const fetchNews = async () => {
       try {
-        const response = await axios.get('http://127.0.0.1:5000/api/news');
+        const response = await axios.get('http://1180973-cr87650.tw1.ru/api/news');
         const filtered = response.data.filter((item: any) => item.status === 'yes');
         setNews(filtered);
         // setNews(response.data);
@@ -40,7 +40,7 @@ export const NewsSection: React.FC = () => {
             style={{ cursor: 'pointer' }}
           >
             <img
-              src={`http://127.0.0.1:5000/uploads/news/${item.file}`}
+              src={`http://1180973-cr87650.tw1.ru/uploads/news/${item.file}`}
               alt={item.title}
             />
             <p><b>{item.title}</b></p>
