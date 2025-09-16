@@ -16,7 +16,7 @@ interface Campaign {
     approval_status: string;
     team_count: number;
 }
-
+// ва
 interface ActionsTableProps {
   onCreatedByClick?: (email: string) => void;
 }
