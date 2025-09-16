@@ -7,7 +7,6 @@ import ProjectHeader from '../ProjectsContent/ProjectHeader';
 import TeamInfo from '../ProjectsContent/TeamInfo';
 import ProjectSurveyPublic from './ProjectSurveyPublic';
 
-// TEST
 interface Campaign {
   id: number;
   title: string;
