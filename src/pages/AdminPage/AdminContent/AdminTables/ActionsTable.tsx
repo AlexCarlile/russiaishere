@@ -87,7 +87,7 @@ export const ActionsTable: React.FC<ActionsTableProps> = ({ onCreatedByClick }) 
 
             // Если imagePath — не полный URL, а имя файла, соберём полный URL:
             if (imagePath && !imagePath.startsWith('http')) {
-                imagePath = `http://127.0.0.1:5000${imagePath}`;
+                imagePath = `http://1180973-cr87650.tw1.ru${imagePath}`;
             }
 
             return imagePath ? (

@@ -10,6 +10,9 @@ export const Info = () => {
     const [loading, setLoading] = useState(true);
     const [photoUrl, setPhotoUrl] = useState<string | null>(null);
     const [fileList, setFileList] = useState<any[]>([]);
+    const [fileName, setFileName] = useState<string | null>(null);
+    const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+
 
     useEffect(() => {
         const token = Cookies.get('token');
@@ -62,25 +65,52 @@ export const Info = () => {
         });
     }, [form]);
 
-    const handleFinish = (values: any) => {
+    const handleFinish = async (values: any) => {
         const token = Cookies.get('token');
 
-        // Если есть файл наставника, берем только имя
-        if (fileList.length > 0) {
-            values.file = fileList[0].name;
+        const mentorFileInput = document.getElementById('mentorFileInput') as HTMLInputElement;
+
+        // если выбран новый файл наставника → сначала загружаем на сервер
+        if (mentorFileInput?.files && mentorFileInput.files[0]) {
+            const formData = new FormData();
+            formData.append('mentor_file', mentorFileInput.files[0]);
+
+            try {
+                const uploadRes = await axios.post(
+                    'http://1180973-cr87650.tw1.ru/upload-mentor',
+                    formData,
+                    {
+                        headers: {
+                            Authorization: `Bearer ${token}`,
+                            'Content-Type': 'multipart/form-data'
+                        }
+                    }
+                );
+
+                // сервер должен вернуть имя файла (uuid/название)
+                values.file = uploadRes.data.filename;
+            } catch (error) {
+                message.error('Ошибка при загрузке файла наставника');
+                return;
+            }
         } else {
-            values.file = null;
+            // если файл уже есть и пользователь его не менял
+            if (fileList.length > 0) {
+                values.file = fileList[0].name;
+            } else {
+                values.file = null;
+            }
         }
 
-        axios.put('http://1180973-cr87650.tw1.ru/user', values, {
-            headers: {
-                Authorization: `Bearer ${token}`
-            }
-        }).then(response => {
-            message.success('Данные успешно обновлены'); // Использование message из antd
-        }).catch(error => {
-            message.error('Ошибка при обновлении данных пользователя'); // Использование message из antd
-        });
+        // обновляем профиль пользователя
+        try {
+            await axios.put('http://1180973-cr87650.tw1.ru/user', values, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            message.success('Данные успешно обновлены');
+        } catch (error) {
+            message.error('Ошибка при обновлении данных пользователя');
+        }
     };
 
     if (loading) {
@@ -175,61 +205,55 @@ export const Info = () => {
 
                                     {form.getFieldValue('role') === '?наставник' && (
                                         <div style={{ width: '100%', marginTop: 24 }}>
-                                            <Form.Item label="Файл наставника" name="file">
-                                                <Upload
-                                                    beforeUpload={() => false} // отменяем автоматическую загрузку
-                                                    maxCount={1}
-                                                    fileList={fileList}
-                                                    onChange={({ fileList }) => setFileList(fileList)}
-                                                    onRemove={async (file) => {
-                                                    const oldFile = form.getFieldValue('file');
-                                                    if (oldFile) {
-                                                        try {
-                                                        await axios.delete(`http://1180973-cr87650.tw1.ru/uploads/mentorsRequest/${oldFile}`);
-                                                        message.success('Файл удалён');
-                                                        } catch (err) {
-                                                        console.error(err);
-                                                        message.error('Ошибка при удалении файла');
+                                            <Form.Item
+                                                labelCol={{ span: 24 }}
+                                                wrapperCol={{ span: 24 }}
+                                                label="Файл наставника"
+                                                style={{ display: 'flex', flexDirection: 'column' }}
+                                            >
+                                                <input
+                                                    type="file"
+                                                    id="mentorFileInput"
+                                                    accept=".pdf,.doc,.docx,.txt,.png,.jpg,.jpeg"
+                                                    style={{ display: 'none' }}
+                                                    onChange={(e) => {
+                                                        const file = e.target.files?.[0];
+                                                        if (file) {
+                                                            setFileName(file.name);
+                                                            setPreviewUrl(null); // для текстовых/док файлов превью не нужно
                                                         }
-                                                        form.setFieldsValue({ file: null });
-                                                        setFileList([]);
-                                                    }
                                                     }}
-                                                    customRequest={async ({ file, onSuccess, onError }) => {
-                                                    try {
-                                                        const formData = new FormData();
-                                                        formData.append('file', file as File);
+                                                />
 
-                                                        const response = await axios.post(
-                                                        'http://1180973-cr87650.tw1.ru/upload',
-                                                        formData,
-                                                        { headers: { 'Content-Type': 'multipart/form-data' } }
-                                                        );
+                                                {fileName && <p style={{ margin: '0 0 8px' }}>Выбран файл: {fileName}</p>}
 
-                                                        const filename = response.data.filename;
-                                                        if (!filename) throw new Error('Файл не был сохранен на сервере');
-
-                                                        // Обновляем форму и список файлов
-                                                        form.setFieldsValue({ file: filename });
-                                                        setFileList([{
-                                                        uid: '-1',
-                                                        name: filename,
-                                                        status: 'done',
-                                                        url: `http://1180973-cr87650.tw1.ru/uploads/mentorsRequest/${filename}`
-                                                    }]);
-
-                                                        message.success('Файл успешно загружен');
-                                                        onSuccess?.(response.data, file as any);
-                                                    } catch (err: any) {
-                                                        console.error('Ошибка загрузки файла:', err);
-                                                        message.error(err?.response?.data?.error || 'Ошибка при загрузке файла');
-                                                        onError?.(err);
-                                                    }
+                                                <Button
+                                                    onClick={() => document.getElementById('mentorFileInput')?.click()}
+                                                    style={{
+                                                        backgroundColor: 'rgb(239, 49, 36)',
+                                                        color: '#fff',
+                                                        border: 'none',
+                                                        borderRadius: '8px',
+                                                        marginBottom: '10px'
                                                     }}
                                                 >
-                                                    <Button icon={<UploadOutlined />}>Выбрать файл</Button>
-                                                </Upload>
-                                                </Form.Item>
+                                                    Выбрать файл
+                                                </Button>
+
+                                                {fileName && (
+                                                    <Button
+                                                        danger
+                                                        type="default"
+                                                        onClick={() => {
+                                                            setFileName(null);
+                                                            const input = document.getElementById('mentorFileInput') as HTMLInputElement;
+                                                            if (input) input.value = '';
+                                                        }}
+                                                    >
+                                                        Удалить файл
+                                                    </Button>
+                                                )}
+                                            </Form.Item>
                                         </div>
                                         )}
 

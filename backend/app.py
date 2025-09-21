@@ -55,7 +55,7 @@ app.config['UPLOAD_FOLDER_NEWS'] = UPLOAD_FOLDER_NEWS
 if not os.path.exists(UPLOAD_FOLDER_PROJECTS):
     os.makedirs(UPLOAD_FOLDER_PROJECTS)
 
-UPLOAD_FOLDER_MENTORS = os.path.join(UPLOAD_FOLDER, 'mentorsRequest')
+UPLOAD_FOLDER_MENTORS = os.path.join(BASE_DIR, 'uploads',  'mentorsRequest')
 app.config['UPLOAD_FOLDER_MENTORS'] = UPLOAD_FOLDER_MENTORS
 
 if not os.path.exists(UPLOAD_FOLDER_MENTORS):
@@ -73,25 +73,27 @@ def serve_uploaded_file_design(filename):
 def uploaded_news_file(filename):
     return send_from_directory(app.config['UPLOAD_FOLDER_NEWS'], filename)
 
-@app.route('/uploads/mentorsRequest/<path:filename>', methods=['GET', 'DELETE'])
-@cross_origin()
-def mentors_file(filename):
-    decoded_filename = unquote(filename)  # декодируем URL
-    file_path = os.path.join(app.config['UPLOAD_FOLDER_MENTORS'], decoded_filename)
+@app.route('/api/mentors/<int:user_id>', methods=['PUT'])
+def update_mentor_file(user_id):
+    if request.content_type and request.content_type.startswith("multipart/form-data"):
+        file = request.files.get('file')
+        if file:
+            ext = os.path.splitext(file.filename)[1]
+            new_filename = f"{uuid.uuid4().hex}{ext}"
+            filepath = os.path.join(app.config['UPLOAD_FOLDER_MENTORS'], new_filename)
+            os.makedirs(app.config['UPLOAD_FOLDER_MENTORS'], exist_ok=True)
+            file.save(filepath)
 
-    if request.method == 'GET':
-        if os.path.exists(file_path):
-            return send_from_directory(app.config['UPLOAD_FOLDER_MENTORS'], decoded_filename)
-        return jsonify({'error': 'Файл не найден'}), 404
+            db = get_db_users()
+            cursor = db.cursor()
+            cursor.execute("UPDATE Users SET file = ? WHERE id = ?", (new_filename, user_id))
+            db.commit()
+            db.close()
 
-    if request.method == 'DELETE':
-        if os.path.exists(file_path):
-            try:
-                os.remove(file_path)
-                return jsonify({'message': 'Файл удалён'}), 200
-            except Exception as e:
-                return jsonify({'error': f'Ошибка при удалении файла: {str(e)}'}), 500
-        return jsonify({'error': 'Файл не найден'}), 404
+            return jsonify({"message": "Файл наставника обновлён", "file": new_filename}), 200
+        return jsonify({"error": "Файл не передан"}), 400
+    return jsonify({"error": "Неверный Content-Type"}), 400
+
 
 DATABASE_USERS = 'data/users.db'
 DATABASE_CAMPAIGNS = 'data/campaigns.db'
@@ -363,10 +365,12 @@ def register():
 
 @app.route('/upload', methods=['POST'])
 def upload_file():
-    if 'file' not in request.files:
+    file = request.files.get('file')
+    if not file:
+        print("Файл не пришёл в request.files")
         return jsonify({'error': 'Нет файла'}), 400
 
-    file = request.files['file']
+    print("Имя файла с фронта:", file.filename)
 
     if file.filename == '':
         return jsonify({'error': 'Файл не выбран'}), 400

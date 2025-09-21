@@ -125,7 +125,7 @@ export const CampaignPage: React.FC = () => {
       {/* Верхний баннер */}
       <div
         style={{
-          backgroundImage: `url(http://127.0.0.1:5000${campaign.image_url})`,
+          backgroundImage: `url(http://1180973-cr87650.tw1.ru${campaign.image_url})`,
           backgroundSize: 'cover',
           backgroundPosition: 'center',
           borderRadius: '32px',

@@ -96,7 +96,7 @@ export const CampaignList: React.FC<CampaignListProps> = ({ campaigns, user, onJ
                             overflow: 'hidden',
                             backgroundColor: '#f0f0f0',
                             // boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
-                            backgroundImage: `url(http://127.0.0.1:5000${campaign.image_url})`,
+                            backgroundImage: `url(http://1180973-cr87650.tw1.ru${campaign.image_url})`,
                             backgroundSize: 'cover',
                             backgroundPosition: 'center',
                             display: 'flex',
@@ -135,7 +135,7 @@ export const CampaignList: React.FC<CampaignListProps> = ({ campaigns, user, onJ
                                 Дата начала: {new Date(campaign.start_date).toLocaleDateString()}, Дата окончания:{' '}
                                 {new Date(campaign.end_date).toLocaleDateString()}
                             </p> */}
-                            {/* {campaign.image_url && <img src={`http://127.0.0.1:5000${campaign.image_url}`} alt={campaign.title} style={{ maxWidth: '100%' }} />} */}
+                            {/* {campaign.image_url && <img src={`http://1180973-cr87650.tw1.ru${campaign.image_url}`} alt={campaign.title} style={{ maxWidth: '100%' }} />} */}
                             {user && (user.role === 'участник' || user.role === 'наставник' || user.role === '?наставник') ? (
                                 <Button 
                                     onClick={(e: React.MouseEvent) => 
