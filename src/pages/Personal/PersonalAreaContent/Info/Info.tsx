@@ -179,48 +179,57 @@ export const Info = () => {
                                                 <Upload
                                                     beforeUpload={() => false} // отменяем автоматическую загрузку
                                                     maxCount={1}
-                                                    fileList={fileList} // используем состояние
-                                                    onChange={({ fileList }) => setFileList(fileList)} // синхронизация с Upload
+                                                    fileList={fileList}
+                                                    onChange={({ fileList }) => setFileList(fileList)}
                                                     onRemove={async (file) => {
-                                                        const oldFile = form.getFieldValue('file');
-                                                        if (oldFile) {
+                                                    const oldFile = form.getFieldValue('file');
+                                                    if (oldFile) {
+                                                        try {
                                                         await axios.delete(`http://1180973-cr87650.tw1.ru/uploads/mentorsRequest/${oldFile}`);
-                                                        form.setFieldsValue({ file: null });
-                                                        setFileList([]); // очистка состояния
+                                                        message.success('Файл удалён');
+                                                        } catch (err) {
+                                                        console.error(err);
+                                                        message.error('Ошибка при удалении файла');
                                                         }
+                                                        form.setFieldsValue({ file: null });
+                                                        setFileList([]);
+                                                    }
                                                     }}
                                                     customRequest={async ({ file, onSuccess, onError }) => {
-                                                        try {
+                                                    try {
                                                         const formData = new FormData();
                                                         formData.append('file', file as File);
 
                                                         const response = await axios.post(
-                                                            'http://1180973-cr87650.tw1.ru/upload',
-                                                            formData,
-                                                            { headers: { 'Content-Type': 'multipart/form-data' } }
+                                                        'http://1180973-cr87650.tw1.ru/upload',
+                                                        formData,
+                                                        { headers: { 'Content-Type': 'multipart/form-data' } }
                                                         );
 
-                                                        form.setFieldsValue({ file: response.data.filename });
-                                                        onSuccess?.(response.data, file as any);
+                                                        const filename = response.data.filename;
+                                                        if (!filename) throw new Error('Файл не был сохранен на сервере');
+
+                                                        // Обновляем форму и список файлов
+                                                        form.setFieldsValue({ file: filename });
                                                         setFileList([{
-                                                            uid: '-1',
-                                                            name: response.data.filename,
-                                                            status: 'done',
-                                                            url: `http://1180973-cr87650.tw1.ru/uploads/mentorsRequest/${response.data.filename}`
+                                                        uid: '-1',
+                                                        name: filename,
+                                                        status: 'done',
+                                                        url: `http://1180973-cr87650.tw1.ru/uploads/mentorsRequest/${filename}`
                                                         }]);
+
                                                         message.success('Файл успешно загружен');
-                                                        } catch (err) {
-                                                        console.error(err);
-                                                        onError?.(err as any);
-                                                        message.error('Ошибка при загрузке файла');
-                                                        }
+                                                        onSuccess?.(response.data, file as any);
+                                                    } catch (err: any) {
+                                                        console.error('Ошибка загрузки файла:', err);
+                                                        message.error(err?.response?.data?.error || 'Ошибка при загрузке файла');
+                                                        onError?.(err);
+                                                    }
                                                     }}
-                                                    >
+                                                >
                                                     <Button icon={<UploadOutlined />}>Выбрать файл</Button>
-                                                    </Upload>
-
-
-                                            </Form.Item>
+                                                </Upload>
+                                                </Form.Item>
                                         </div>
                                         )}
 

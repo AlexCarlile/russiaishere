@@ -366,21 +366,40 @@ def upload_file():
     if file.filename == '':
         return jsonify({'error': 'Файл не выбран'}), 400
 
-    if file and allowed_file_projects(file.filename):
-        original_filename = file.filename
-        extension = os.path.splitext(original_filename)[1]  # сохраняем расширение, включая точку
-        unique_name = f"{uuid.uuid4().hex}{extension}"
-        safe_filename = secure_filename(unique_name)  # на всякий случай
+    # Проверка расширения
+    ALLOWED_EXTENSIONS = {'pdf', 'doc', 'docx', 'xlsx', 'pptx', 'png', 'jpg', 'jpeg', 'gif', 'webp'}
+    ext = file.filename.rsplit('.', 1)[-1].lower()
+    if ext not in ALLOWED_EXTENSIONS:
+        return jsonify({'error': f'Недопустимый формат файла: {ext}'}), 400
 
-        save_path = os.path.join(app.config['UPLOAD_FOLDER_MENTORS'], safe_filename)
+    try:
+        # Создаем уникальное имя
+        import uuid
+        from werkzeug.utils import secure_filename
+
+        unique_name = f"{uuid.uuid4().hex}.{ext}"
+        safe_filename = secure_filename(unique_name)
+        save_folder = app.config['UPLOAD_FOLDER_MENTORS']
+
+        # Создаем папку, если вдруг её нет
+        if not os.path.exists(save_folder):
+            os.makedirs(save_folder, exist_ok=True)
+            print(f"Папка создана: {save_folder}")
+
+        save_path = os.path.join(save_folder, safe_filename)
         print("Файл получен:", file.filename)
-        print("Путь для сохранения:", save_path)
-        print("Существует папка для сохранения:", os.path.exists(app.config['UPLOAD_FOLDER_MENTORS']))
+        print("Сохраняем по пути:", save_path)
+        print("Существует папка для сохранения:", os.path.exists(save_folder))
+
         file.save(save_path)
+        print("Файл успешно сохранен!")
 
         return jsonify({'filename': safe_filename}), 200
 
-    return jsonify({'error': 'Недопустимый формат файла'}), 400
+    except Exception as e:
+        print("Ошибка при сохранении файла:", e)
+        return jsonify({'error': 'Ошибка при сохранении файла'}), 500
+
     
 @app.route('/random-icon', methods=['GET'])
 def get_random_icon():
