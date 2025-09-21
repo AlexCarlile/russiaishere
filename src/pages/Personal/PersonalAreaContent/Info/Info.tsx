@@ -216,7 +216,7 @@ export const Info = () => {
                                                         name: filename,
                                                         status: 'done',
                                                         url: `http://1180973-cr87650.tw1.ru/uploads/mentorsRequest/${filename}`
-                                                        }]);
+                                                    }]);
 
                                                         message.success('Файл успешно загружен');
                                                         onSuccess?.(response.data, file as any);

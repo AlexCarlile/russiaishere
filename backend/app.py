@@ -73,20 +73,28 @@ def uploaded_news_file(filename):
     return send_from_directory(app.config['UPLOAD_FOLDER_NEWS'], filename)
 
 @app.route('/uploads/mentorsRequest/<path:filename>', methods=['GET', 'DELETE'])
+@cross_origin()  # чтобы CORS не мешал
 def mentors_file(filename):
     file_path = os.path.join(app.config['UPLOAD_FOLDER_MENTORS'], filename)
-    
+
     if request.method == 'GET':
         if os.path.exists(file_path):
-            return send_from_directory(app.config['UPLOAD_FOLDER_MENTORS'], filename)
+            return send_from_directory(app.config['UPLOAD_FOLDER_MENTORS'], filename, as_attachment=True)
         return jsonify({'error': 'Файл не найден'}), 404
 
     if request.method == 'DELETE':
-        if os.path.exists(file_path):
-            os.remove(file_path)
-            return jsonify({'message': 'Файл удалён'}), 200
-        return jsonify({'error': 'Файл не найден'}), 404
+        # Декодируем URL на всякий случай
+        from urllib.parse import unquote
+        decoded_filename = unquote(filename)
+        file_path = os.path.join(app.config['UPLOAD_FOLDER_MENTORS'], decoded_filename)
 
+        if os.path.exists(file_path):
+            try:
+                os.remove(file_path)
+                return jsonify({'message': 'Файл удалён'}), 200
+            except Exception as e:
+                return jsonify({'error': f'Ошибка при удалении файла: {str(e)}'}), 500
+        return jsonify({'error': 'Файл не найден'}), 404
 
 DATABASE_USERS = 'data/users.db'
 DATABASE_CAMPAIGNS = 'data/campaigns.db'
