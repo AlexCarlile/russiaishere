@@ -474,6 +474,8 @@ def manage_user():
         school = data.get('school')
         role = data.get('role')
         file = data.get('file')
+        if file and not isinstance(file, str):
+            file = str(file)  # Преобразуем в строку на всякий случай
 
         try:
             db = sqlite3.connect(DATABASE_USERS)
