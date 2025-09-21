@@ -323,11 +323,13 @@ export const RegistrationForm: React.FC = () => {
                                 valuePropName="fileList"
                                 getValueFromEvent={(e) => (Array.isArray(e) ? e : e && e.fileList)}
                                 rules={[{ required: true, message: 'Загрузите файл подтверждающий статус' }]}
+                                extra="Допустимые форматы: png, jpg, jpeg, gif, webp, pdf"
                             >
                                 <Upload 
                                     name="file"
                                     // customRequest={handleUpload}
                                     beforeUpload={() => false} // Отключаем автоматическую загрузку
+                                    accept=".png,.jpg,.jpeg,.gif,.webp,.pdf"
                                 >
                                     <Button icon={<UploadOutlined />}>Загрузить</Button>
                                 </Upload>
