@@ -373,6 +373,9 @@ def upload_file():
         safe_filename = secure_filename(unique_name)  # на всякий случай
 
         save_path = os.path.join(app.config['UPLOAD_FOLDER_MENTORS'], safe_filename)
+        print("Файл получен:", file.filename)
+        print("Путь для сохранения:", save_path)
+        print("Существует папка для сохранения:", os.path.exists(app.config['UPLOAD_FOLDER_MENTORS']))
         file.save(save_path)
 
         return jsonify({'filename': safe_filename}), 200
