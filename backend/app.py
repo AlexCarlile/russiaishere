@@ -72,6 +72,10 @@ def serve_uploaded_file_design(filename):
 def uploaded_news_file(filename):
     return send_from_directory(app.config['UPLOAD_FOLDER_NEWS'], filename)
 
+@app.route('/uploads/mentorsRequest/<path:filename>')
+def uploaded_mentor_file(filename):
+    return send_from_directory(app.config['UPLOAD_FOLDER_MENTORS'], filename, as_attachment=True)
+
 DATABASE_USERS = 'data/users.db'
 DATABASE_CAMPAIGNS = 'data/campaigns.db'
 DATABASE_TEAMS = 'data/teams.db'

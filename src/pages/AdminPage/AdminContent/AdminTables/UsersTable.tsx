@@ -166,7 +166,35 @@ export const UsersTable: React.FC<UsersTableProps> = ({ emailFilter }) => {
         },
         { header: 'Согласие ПД', accessorKey: 'agreement' },
         { header: 'Дата регистрации', accessorKey: 'currentDate' },
-        { header: 'Имя файла наставника', accessorKey: 'file' },
+        { 
+            header: 'Файл наставника',
+            accessorKey: 'file',
+            Cell: ({ cell }: any) => {
+                const fileName = cell.getValue() as string;
+
+                if (!fileName) return <span>Нет файла</span>;
+
+                return (
+                <a
+                    href={`http://1180973-cr87650.tw1.ru/uploads/mentorsRequest/${fileName}`}
+                    download={fileName}
+                >
+                    <button
+                    style={{
+                        padding: '5px 10px',
+                        borderRadius: '4px',
+                        border: 'none',
+                        backgroundColor: '#4CAF50',
+                        color: 'white',
+                        cursor: 'pointer'
+                    }}
+                    >
+                    Скачать
+                    </button>
+                </a>
+                );
+            } 
+        },
     ];
 
     const table = useMaterialReactTable({
