@@ -197,7 +197,7 @@ def close_connection(exception):
         db.close()
 
 @app.route('/api/users/<int:user_id>', methods=['PUT'])
-@cross_origin()
+# @cross_origin()
 def update_user(user_id):
     data = request.get_json()
     role = data.get('role')
@@ -218,7 +218,7 @@ def update_user(user_id):
     return jsonify({"message": "User updated successfully"}), 200
 
 @app.route('/api/users/<int:user_id>', methods=['DELETE'])
-@cross_origin()
+# @cross_origin()
 def delete_user(user_id):
     db = get_db(DATABASE_USERS)
     cursor = db.cursor()
@@ -229,7 +229,7 @@ def delete_user(user_id):
     return jsonify({"message": "Пользователь удалён"}), 200
 
 @app.route('/api/campaigns/<int:campaign_id>', methods=['PUT'])
-@cross_origin()
+# @cross_origin()
 def update_campaign(campaign_id):
     data = request.get_json()
     approval_status = data.get('approval_status')
@@ -466,7 +466,7 @@ def protected():
 
 @app.route('/user', methods=['GET', 'PUT', 'OPTIONS'])
 @jwt_required()
-@cross_origin()
+# @cross_origin()
 def manage_user():
     if request.method == 'OPTIONS':
         return '', 200  # Просто возвращаем пустой ответ на предварительный CORS-запрос
@@ -750,7 +750,7 @@ def get_campaigns():
 # Получение списка всех акций
 @app.route('/allcampaigns', methods=['GET'])
 # @jwt_required()
-@cross_origin()
+# @cross_origin()
 def get_allcampaigns():
     db = get_db(DATABASE_CAMPAIGNS)
     cursor = db.cursor()
@@ -782,7 +782,7 @@ def get_allcampaigns():
 
 @app.route('/selectedcampaigns', methods=['GET', 'POST'])
 @jwt_required()
-@cross_origin()
+# @cross_origin()
 def get_selected_campaigns():
     data = request.json
     user_id = data.get('userId')
@@ -1451,7 +1451,7 @@ def set_project_status():
         db.close()
 
 @app.route('/api/projects/<int:project_id>', methods=['PUT'])
-@cross_origin()
+# @cross_origin()
 def update_project_description(project_id):
     data = request.get_json()
     new_description = data.get('description')
@@ -1501,7 +1501,7 @@ def update_project_description(project_id):
         db.close()
 
 @app.route('/api/projects/<int:team_id>', methods=['GET'])
-@cross_origin()
+# @cross_origin()
 def get_public_project(team_id):
     db_projects = get_db_projects()
     db_team_members = get_db_team_members()
