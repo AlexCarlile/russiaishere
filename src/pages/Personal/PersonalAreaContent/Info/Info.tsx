@@ -206,15 +206,50 @@ export const Info = () => {
                                                     accept=".pdf,.doc,.docx,.txt,.png,.jpg,.jpeg"
                                                     style={{ display: 'none' }}
                                                     onChange={(e) => {
+                                                        // const file = e.target.files?.[0];
+                                                        // if (file) {
+                                                        //     setFileName(file.name);
+                                                        //     setPreviewUrl(null); // для текстовых/док файлов превью не нужно
+                                                        // }
                                                         const file = e.target.files?.[0];
                                                         if (file) {
                                                             setFileName(file.name);
-                                                            setPreviewUrl(null); // для текстовых/док файлов превью не нужно
+
+                                                            // Если изображение — создаем preview
+                                                            if (file.type.startsWith('image/')) {
+                                                                const reader = new FileReader();
+                                                                reader.onloadend = () => {
+                                                                    setPreviewUrl(reader.result as string);
+                                                                };
+                                                                reader.readAsDataURL(file);
+                                                            } else {
+                                                                setPreviewUrl(null); // для документов превью нет
+                                                            }
                                                         }
                                                     }}
                                                 />
 
-                                                {fileName && <p style={{ margin: '0 0 8px' }}>Выбран файл: {fileName}</p>}
+                                                {/* {fileName && <p style={{ margin: '0 0 8px' }}>Выбран файл: {fileName}</p>} */}
+                                                {fileName && (
+                                                    <div style={{ marginBottom: 8 }}>
+                                                        <p>Выбран файл: {fileName}</p>
+                                                        {previewUrl ? (
+                                                        <img 
+                                                            src={previewUrl} 
+                                                            alt="Preview" 
+                                                            style={{ maxWidth: '200px', marginTop: 8, borderRadius: '8px' }} 
+                                                        />
+                                                        ) : (
+                                                        <a 
+                                                            href={URL.createObjectURL((document.getElementById('mentorFileInput') as HTMLInputElement).files![0])} 
+                                                            target="_blank" 
+                                                            rel="noreferrer"
+                                                        >
+                                                            Открыть файл
+                                                        </a>
+                                                        )}
+                                                    </div>
+                                                )}
 
                                                 <Button
                                                     onClick={() => document.getElementById('mentorFileInput')?.click()}

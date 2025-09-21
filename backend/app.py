@@ -25,9 +25,10 @@ app = Flask(__name__)
 app = Flask(__name__)
 app.config['JWT_SECRET_KEY'] = 'your_jwt_secret_key'
 app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(minutes=1000)  # Устанавливаем время жизни токена
+app.config['MAX_CONTENT_LENGTH'] = 10 * 1024 * 1024  # 10 МБ
 jwt = JWTManager(app)
 # CORS(app, resources={r"/*": {"origins": "http://localhost:3000"}})
-CORS(app, resources={r"/*": {"origins": "*"}})
+# CORS(app, resources={r"/*": {"origins": "*"}})
 
 # Папка с иконками (например: static/icons)
 ICONS_FOLDER = os.path.join(app.root_path, 'uploads', 'icons')
@@ -74,6 +75,7 @@ def uploaded_news_file(filename):
     return send_from_directory(app.config['UPLOAD_FOLDER_NEWS'], filename)
 
 @app.route('/api/mentors/<string:email>', methods=['PUT'])
+@cross_origin()
 def update_mentor_file(email):
     if request.content_type and request.content_type.startswith("multipart/form-data"):
         file = request.files.get('file')
