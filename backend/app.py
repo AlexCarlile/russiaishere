@@ -73,7 +73,7 @@ def serve_uploaded_file_design(filename):
 def uploaded_news_file(filename):
     return send_from_directory(app.config['UPLOAD_FOLDER_NEWS'], filename)
 
-@app.route('/api/mentors/<int:user_id>', methods=['PUT'])
+@app.route('/api/mentors/<int:email>', methods=['PUT'])
 def update_mentor_file(user_id):
     if request.content_type and request.content_type.startswith("multipart/form-data"):
         file = request.files.get('file')

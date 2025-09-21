@@ -82,7 +82,7 @@ export const Info = () => {
 
             try {
             await axios.put(
-                `http://1180973-cr87650.tw1.ru/api/mentors/${userId}`, // 👈 теперь всегда есть id
+                `http://1180973-cr87650.tw1.ru/api/mentors/${encodeURIComponent(userId)}`, // 👈 теперь всегда есть id
                 formData,
                 {
                 headers: {
