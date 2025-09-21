@@ -74,6 +74,10 @@ def serve_uploaded_file_design(filename):
 def uploaded_news_file(filename):
     return send_from_directory(app.config['UPLOAD_FOLDER_NEWS'], filename)
 
+@app.route('/uploads/mentorsRequest/<filename>')
+def uploaded_mentors_file(filename):
+    return send_from_directory(app.config['UPLOAD_FOLDER_MENTORS'], filename)
+
 @app.route('/api/mentors/<string:email>', methods=['PUT'])
 # @cross_origin()
 def update_mentor_file(email):

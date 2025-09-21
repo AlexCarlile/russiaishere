@@ -19,53 +19,45 @@ export const Info = () => {
         const token = Cookies.get('token');
 
         axios.get('http://1180973-cr87650.tw1.ru/user', {
-            headers: {
-                Authorization: `Bearer ${token}`
-            }
+            headers: { Authorization: `Bearer ${token}` }
         }).then(response => {
             form.setFieldsValue(response.data);
             setUserId(response.data.email);
             setLoading(false);
 
-            // Получаем фото пользователя, если оно существует
+            // Фото пользователя
             const savedImage = localStorage.getItem('personnelImage');
             if (savedImage) {
                 setPhotoUrl(savedImage);
             } else {
-                axios.get('http://1180973-cr87650.tw1.ru/random-icon', {
-                    responseType: 'blob'
-                }).then(res => {
-                    const imageUrl = URL.createObjectURL(res.data);
-                    setPhotoUrl(imageUrl);
-
-                    // Преобразуем blob в base64 для хранения
-                    const reader = new FileReader();
-                    reader.onloadend = () => {
-                        if (reader.result) {
-                            localStorage.setItem('personnelImage', reader.result.toString());
-                        }
-                    };
-                    reader.readAsDataURL(res.data);
-                }).catch(() => {
-                    message.error('Не удалось загрузить иконку');
-                });
+                axios.get('http://1180973-cr87650.tw1.ru/random-icon', { responseType: 'blob' })
+                    .then(res => {
+                        const imageUrl = URL.createObjectURL(res.data);
+                        setPhotoUrl(imageUrl);
+                        const reader = new FileReader();
+                        reader.onloadend = () => localStorage.setItem('personnelImage', reader.result!.toString());
+                        reader.readAsDataURL(res.data);
+                    });
             }
 
-            // Если есть файл наставника
-            const savedFile = response.data.file;
-            if (savedFile) {
-            setFileList([{
-                uid: '-1',
-                name: response.data.filename,  // uuid имя
-                status: 'done',
-                url: `http://1180973-cr87650.tw1.ru/uploads/mentorsRequest/${response.data.filename}`
-            }]);
+            // Файл наставника
+            if (response.data.file) {
+                const filename = response.data.file;
+                setFileName(filename);
+
+                // Если это изображение — показываем превью
+                if (filename.match(/\.(png|jpg|jpeg|gif)$/i)) {
+                    setPreviewUrl(`http://1180973-cr87650.tw1.ru/uploads/mentorsRequest/${filename}`);
+                } else {
+                    setPreviewUrl(null); // для документов превью нет
+                }
             }
-        }).catch(error => {
-            message.error('Ошибка при загрузке данных пользователя'); // Использование message из antd
+        }).catch(() => {
+            message.error('Ошибка при загрузке данных пользователя');
             setLoading(false);
         });
     }, [form]);
+
 
     const handleFinish = async (values: any) => {
         const token = Cookies.get('token');
@@ -233,20 +225,21 @@ export const Info = () => {
                                                 {fileName && (
                                                     <div style={{ marginBottom: 8 }}>
                                                         <p>Выбран файл: {fileName}</p>
+
                                                         {previewUrl ? (
-                                                        <img 
-                                                            src={previewUrl} 
-                                                            alt="Preview" 
-                                                            style={{ maxWidth: '200px', marginTop: 8, borderRadius: '8px' }} 
-                                                        />
+                                                            <img
+                                                                src={previewUrl}
+                                                                alt="Preview"
+                                                                style={{ maxWidth: '200px', marginTop: 8, borderRadius: '8px' }}
+                                                            />
                                                         ) : (
-                                                        <a 
-                                                            href={URL.createObjectURL((document.getElementById('mentorFileInput') as HTMLInputElement).files![0])} 
-                                                            target="_blank" 
-                                                            rel="noreferrer"
-                                                        >
-                                                            Открыть файл
-                                                        </a>
+                                                            <a
+                                                                href={`http://1180973-cr87650.tw1.ru/uploads/mentorsRequest/${fileName}`}
+                                                                target="_blank"
+                                                                rel="noreferrer"
+                                                            >
+                                                                Открыть файл
+                                                            </a>
                                                         )}
                                                     </div>
                                                 )}
