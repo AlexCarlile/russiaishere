@@ -24,7 +24,7 @@ const ProjectFileUpload = forwardRef<ProjectFileUploadRef, ProjectFileUploadProp
         const fetchExistingFile = async () => {
             try {
             const token = Cookies.get("token");
-            const response = await axios.get(`http://127.0.0.1:5000/get_project_file`, {
+            const response = await axios.get(`http://1180973-cr87650.tw1.ru/get_project_file`, {
                 params: { team_id: teamId },
                 headers: {
                 Authorization: `Bearer ${token}`,
@@ -99,7 +99,7 @@ const ProjectFileUpload = forwardRef<ProjectFileUploadRef, ProjectFileUploadProp
         try {
             const token = Cookies.get("token");
             const response = await axios.post(
-            "http://127.0.0.1:5000/upload_project_file",
+            "http://1180973-cr87650.tw1.ru/upload_project_file",
             formData,
             {
                 headers: {
@@ -134,7 +134,7 @@ const ProjectFileUpload = forwardRef<ProjectFileUploadRef, ProjectFileUploadProp
             const token = Cookies.get("token");
             // отправляем запрос на удаление файла
             await axios.post(
-            "http://127.0.0.1:5000/delete_project_file",
+            "http://1180973-cr87650.tw1.ru/delete_project_file",
             { team_id: teamId },
             { headers: { Authorization: `Bearer ${token}` } }
             );

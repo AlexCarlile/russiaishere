@@ -318,7 +318,8 @@ export const RegistrationForm: React.FC = () => {
                         <Col span={12}>
                             <Form.Item
                                 name="file"
-                                label="Загрузите файл"
+                                // 'png', 'jpg', 'jpeg', 'gif', 'webp', 'pdf'
+                                label="Загрузите файл" 
                                 valuePropName="fileList"
                                 getValueFromEvent={(e) => (Array.isArray(e) ? e : e && e.fileList)}
                                 rules={[{ required: true, message: 'Загрузите файл подтверждающий статус' }]}

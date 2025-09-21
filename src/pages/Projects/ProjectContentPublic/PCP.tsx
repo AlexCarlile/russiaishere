@@ -41,7 +41,7 @@ const PCP: React.FC = () => {
       setError(null);
 
       try {
-        const url = `http://127.0.0.1:5000/api/projects/${teamId}`;
+        const url = `http://1180973-cr87650.tw1.ru/api/projects/${teamId}`;
         const token = Cookies.get('token');
 
         // Передаем Authorization только если есть токен
@@ -85,7 +85,7 @@ const PCP: React.FC = () => {
       if (!projectData?.campaign_id) return;
 
       try {
-        const response = await fetch(`http://127.0.0.1:5000/campaigns/${projectData.campaign_id}`);
+        const response = await fetch(`http://1180973-cr87650.tw1.ru/campaigns/${projectData.campaign_id}`);
         if (!response.ok) throw new Error(`Ошибка ${response.status}`);
         const data: Campaign = await response.json();
         setCampaign(data);

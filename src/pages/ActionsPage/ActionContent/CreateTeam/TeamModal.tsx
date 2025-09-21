@@ -29,7 +29,7 @@ export const TeamModal: React.FC<TeamModalProps> = ({
   //   try {
   //     const token = Cookies.get('token');
   //     const response = await axios.post(
-  //       'http://127.0.0.1:5000/createTeam',
+  //       'http://1180973-cr87650.tw1.ru/createTeam',
   //       {
   //         name: teamName,
   //         campaignId,
@@ -60,7 +60,7 @@ export const TeamModal: React.FC<TeamModalProps> = ({
   //   try {
   //     const token = Cookies.get('token');
   //     const response = await axios.post(
-  //       'http://127.0.0.1:5000/joinTeam',
+  //       'http://1180973-cr87650.tw1.ru/joinTeam',
   //       {
   //         userId: user.email,
   //         campaignId,
@@ -90,7 +90,7 @@ export const TeamModal: React.FC<TeamModalProps> = ({
     try {
       const token = Cookies.get('token');
       const response = await axios.post(
-        'http://127.0.0.1:5000/createTeam',
+        'http://1180973-cr87650.tw1.ru/createTeam',
         {
           name: teamName,
           campaignId,
@@ -118,7 +118,7 @@ export const TeamModal: React.FC<TeamModalProps> = ({
     try {
       const token = Cookies.get('token');
       const response = await axios.post(
-        'http://127.0.0.1:5000/joinTeam',
+        'http://1180973-cr87650.tw1.ru/joinTeam',
         {
           userId: user.email,
           campaignId,

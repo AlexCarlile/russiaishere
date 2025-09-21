@@ -15,7 +15,7 @@ export const AuthorizationForm: React.FC = () => {
         const { email, password } = values;
 
         try {
-            const response = await axios.post('http://127.0.0.1:5000/login', {
+            const response = await axios.post('http://1180973-cr87650.tw1.ru/login', {
                 email,
                 password,
             });

@@ -35,14 +35,14 @@ export const ProjectsTable = () => {
 
     const fetchProjects = async () => {
         try {
-            const response = await axios.get('http://127.0.0.1:5000/api/projects');
+            const response = await axios.get('http://1180973-cr87650.tw1.ru/api/projects');
             setProjects(response.data);
         } catch (error) {
             console.error('Ошибка при загрузке акций:', error); 
         }
 
         try {
-            const response = await axios.get('http://127.0.0.1:5000/api/campaigns');
+            const response = await axios.get('http://1180973-cr87650.tw1.ru/api/campaigns');
             setCampaigns(response.data);
         } catch (error) {
             console.error('Ошибка при загрузке акций:', error);
@@ -55,7 +55,7 @@ export const ProjectsTable = () => {
         formData.append('file', file);
 
         try {
-            const res = await axios.post('http://127.0.0.1:5000/api/projects/upload-design', formData, {
+            const res = await axios.post('http://1180973-cr87650.tw1.ru/api/projects/upload-design', formData, {
                 headers: { 'Content-Type': 'multipart/form-data' }
             });
             alert('Файл успешно загружен');
@@ -78,7 +78,7 @@ export const ProjectsTable = () => {
     // Функция для обновления статуса статуса победителя
     const updateStatus = async (id: number, newStatus: string) => {
         try {
-            await axios.put(`http://127.0.0.1:5000/api/projects/${id}`, {
+            await axios.put(`http://1180973-cr87650.tw1.ru/api/projects/${id}`, {
                 description: newStatus,  // правильное имя поля
             });
 
@@ -97,7 +97,7 @@ export const ProjectsTable = () => {
 
     const updateStatusField = async (id: number, newStatus: string) => {
         try {
-            await axios.put(`http://127.0.0.1:5000/api/projects/${id}`, {
+            await axios.put(`http://1180973-cr87650.tw1.ru/api/projects/${id}`, {
                 status: newStatus,  // 👈 здесь именно статус
             });
 
@@ -197,7 +197,7 @@ export const ProjectsTable = () => {
 
                 const fullUrl = fileName.startsWith('http')
                 ? fileName
-                : `http://127.0.0.1:5000/uploads/project_files/${fileName}`;
+                : `http://1180973-cr87650.tw1.ru/uploads/project_files/${fileName}`;
 
                 return fileName ? (
                 <img
@@ -221,7 +221,7 @@ export const ProjectsTable = () => {
                 const fullUrl = fileName
                     ? fileName.startsWith('http')
                         ? fileName
-                        : `http://127.0.0.1:5000/uploads/project_files_design/${fileName}`
+                        : `http://1180973-cr87650.tw1.ru/uploads/project_files_design/${fileName}`
                     : null;
 
                 return (
@@ -339,8 +339,8 @@ export const ProjectsTable = () => {
     const handleDownload = async () => {
       try {
         const [projectsRes, campaignsRes] = await Promise.all([
-          axios.get('http://127.0.0.1:5000/api/projects'),
-          axios.get('http://127.0.0.1:5000/api/campaigns'),
+          axios.get('http://1180973-cr87650.tw1.ru/api/projects'),
+          axios.get('http://1180973-cr87650.tw1.ru/api/campaigns'),
         ]);
         const projectsData: Project[] = projectsRes.data;
         const campaignsData: Campaign[] = campaignsRes.data;

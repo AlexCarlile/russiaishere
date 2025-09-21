@@ -33,7 +33,7 @@ export const ActionContent: React.FC = () => {
     // Функция для получения всех акций без авторизации
     const fetchCampaigns = async () => {
         try {
-            const response = await axios.get('http://127.0.0.1:5000/allcampaigns');
+            const response = await axios.get('http://1180973-cr87650.tw1.ru/allcampaigns');
             setCampaigns(response.data);
         } catch (error) {
             console.error('Failed to fetch campaigns:', error);
@@ -45,7 +45,7 @@ export const ActionContent: React.FC = () => {
         const token = Cookies.get('token');
         if (token) {
             try {
-                const response = await axios.get('http://127.0.0.1:5000/user', {
+                const response = await axios.get('http://1180973-cr87650.tw1.ru/user', {
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
                 setUser(response.data);

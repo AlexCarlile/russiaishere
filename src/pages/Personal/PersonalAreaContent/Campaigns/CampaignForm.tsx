@@ -19,7 +19,7 @@ export const CampaignForm: React.FC<CampaignFormProps> = ({ onClose }) => {
 
     const fetchCampaigns = async () => {
         try {
-            const response = await axios.get('http://127.0.0.1:5000/campaigns');
+            const response = await axios.get('http://1180973-cr87650.tw1.ru/campaigns');
             setCampaigns(response.data);
         } catch (error) {
             console.error('Failed to fetch campaigns:', error);
@@ -54,7 +54,7 @@ export const CampaignForm: React.FC<CampaignFormProps> = ({ onClose }) => {
         }
 
         try {
-            const response = await axios.post('http://127.0.0.1:5000/campaigns', formData, {
+            const response = await axios.post('http://1180973-cr87650.tw1.ru/campaigns', formData, {
                 headers: {
                     ...headers,
                     'Content-Type': 'multipart/form-data',

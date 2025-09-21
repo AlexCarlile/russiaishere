@@ -29,7 +29,7 @@ export const ActionsTable: React.FC<ActionsTableProps> = ({ onCreatedByClick }) 
 
   const fetchCampaigns = async () => {
     try {
-      const response = await axios.get('http://127.0.0.1:5000/api/campaigns');
+      const response = await axios.get('http://1180973-cr87650.tw1.ru/api/campaigns');
       setCampaigns(response.data);
         console.log("Данные", response.data)
 
@@ -45,7 +45,7 @@ export const ActionsTable: React.FC<ActionsTableProps> = ({ onCreatedByClick }) 
   // Функция для обновления статуса акции
   const updateStatus = async (id: number, newStatus: string) => {
     try {
-      await axios.put(`http://127.0.0.1:5000/api/campaigns/${id}`, { approval_status: newStatus });
+      await axios.put(`http://1180973-cr87650.tw1.ru/api/campaigns/${id}`, { approval_status: newStatus });
       setCampaigns((prev) =>
         prev.map((c) => (c.id === id ? { ...c, approval_status: newStatus } : c))
       );
@@ -179,7 +179,7 @@ export const ActionsTable: React.FC<ActionsTableProps> = ({ onCreatedByClick }) 
   const handleDownload = () => {
     // Получаем все данные с сервера, чтобы скачать именно актуальный полный список
     axios
-      .get('http://127.0.0.1:5000/api/campaigns')
+      .get('http://1180973-cr87650.tw1.ru/api/campaigns')
       .then((response) => {
         const csv = convertToCSV(response.data);
         const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });

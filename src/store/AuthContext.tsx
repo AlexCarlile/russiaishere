@@ -28,7 +28,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   // Функция загрузки роли пользователя с API
   const fetchUserRole = useCallback(async (token: string) => {
     try {
-      const response = await fetch("http://127.0.0.1:5000/user", {
+      const response = await fetch("http://1180973-cr87650.tw1.ru/user", {
         method: 'GET',
         headers: {
           Authorization: `Bearer ${token}`,

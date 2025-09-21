@@ -35,7 +35,7 @@ export const Personnel: React.FC<PersonnelProps> = ({ isMobile }) => {
         if (savedImage) {
             setPhotoUrl(savedImage);
         } else {
-            axios.get('http://127.0.0.1:5000/random-icon', {
+            axios.get('http://1180973-cr87650.tw1.ru/random-icon', {
                 responseType: 'blob'
             }).then(res => {
                 const imageUrl = URL.createObjectURL(res.data);

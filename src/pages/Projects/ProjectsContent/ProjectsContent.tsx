@@ -82,9 +82,9 @@ export const ProjectsContent: React.FC<ProjectsContentProps>  = ({ winnerPublic 
                 const token = Cookies.get('token');
 
                 if (winnerPublic && projectId) {
-                    url = `http://127.0.0.1:5000/api/projects/${projectId}`;
+                    url = `http://1180973-cr87650.tw1.ru/api/projects/${projectId}`;
                 } else if (teamId) {
-                    url = `http://127.0.0.1:5000/team/${teamId}`;
+                    url = `http://1180973-cr87650.tw1.ru/team/${teamId}`;
                 } else return;
 
                 const headers: any = {};
@@ -125,7 +125,7 @@ export const ProjectsContent: React.FC<ProjectsContentProps>  = ({ winnerPublic 
             if (!projectData || !projectData.campaign_id) return;
 
             try {
-                const response = await fetch(`http://127.0.0.1:5000/campaigns/${projectData.campaign_id}`, {
+                const response = await fetch(`http://1180973-cr87650.tw1.ru/campaigns/${projectData.campaign_id}`, {
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json',
@@ -180,7 +180,7 @@ export const ProjectsContent: React.FC<ProjectsContentProps>  = ({ winnerPublic 
         // ✅ Проверка наличия файла
         try {
             const token = Cookies.get('token');
-            const response = await axios.get(`http://127.0.0.1:5000/get_project_file?team_id=${teamId}`, {
+            const response = await axios.get(`http://1180973-cr87650.tw1.ru/get_project_file?team_id=${teamId}`, {
             headers: {
                 Authorization: `Bearer ${token}`,
             },
@@ -203,7 +203,7 @@ export const ProjectsContent: React.FC<ProjectsContentProps>  = ({ winnerPublic 
             const surveyData = surveyRef.current.getSurveyData();
             const token = Cookies.get('token');
 
-            await axios.post('http://127.0.0.1:5000/api/save-answers', {
+            await axios.post('http://1180973-cr87650.tw1.ru/api/save-answers', {
             team_id: teamId,
             answers: surveyData,
             }, {
@@ -213,7 +213,7 @@ export const ProjectsContent: React.FC<ProjectsContentProps>  = ({ winnerPublic 
             }
             });
 
-            await axios.post(`http://127.0.0.1:5000/api/set-project-status`, {
+            await axios.post(`http://1180973-cr87650.tw1.ru/api/set-project-status`, {
             team_id: teamId,
             status: "yes"
             }, {

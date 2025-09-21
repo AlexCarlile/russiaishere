@@ -33,7 +33,7 @@ export const Campaigns: React.FC = () => {
             const token = Cookies.get('token');
             
             // Получаем данные пользователя
-            const userResponse = await axios.get('http://127.0.0.1:5000/user', {
+            const userResponse = await axios.get('http://1180973-cr87650.tw1.ru/user', {
                 headers: {
                     'Authorization': `Bearer ${token}`
                 }
@@ -43,7 +43,7 @@ export const Campaigns: React.FC = () => {
             // Проверяем наличие userId и передаём его на сервер
         const userId = userResponse.data.email; // Предполагается, что id находится в userResponse.data
         if (userId) {
-            const campaignsResponse = await axios.post('http://127.0.0.1:5000/selectedcampaigns', {
+            const campaignsResponse = await axios.post('http://1180973-cr87650.tw1.ru/selectedcampaigns', {
                 userId: userId, // Используем userId вместо user.email
             }, {
                 headers: {

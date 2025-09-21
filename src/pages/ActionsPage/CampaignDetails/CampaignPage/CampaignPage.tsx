@@ -38,7 +38,7 @@ export const CampaignPage: React.FC = () => {
     const token = Cookies.get('token');
     if (token) {
       try {
-        const response = await axios.get('http://127.0.0.1:5000/user', {
+        const response = await axios.get('http://1180973-cr87650.tw1.ru/user', {
           headers: { 'Authorization': `Bearer ${token}` }
         });
         setUser(response.data);
@@ -62,7 +62,7 @@ export const CampaignPage: React.FC = () => {
           headers['Authorization'] = `Bearer ${token}`;
         }
 
-        const response = await fetch(`http://127.0.0.1:5000/campaigns/${id}`, {
+        const response = await fetch(`http://1180973-cr87650.tw1.ru/campaigns/${id}`, {
           method: 'GET',
           headers
         });
@@ -91,7 +91,7 @@ export const CampaignPage: React.FC = () => {
     }
 
     try {
-      const response = await fetch(`http://127.0.0.1:5000/checkUserInTeam`, {
+      const response = await fetch(`http://1180973-cr87650.tw1.ru/checkUserInTeam`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

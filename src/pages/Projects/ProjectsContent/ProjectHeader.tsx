@@ -20,7 +20,7 @@ const ProjectHeader: React.FC<ProjectHeaderProps> = ({ campaign }) => {
   return (
     <div className="project-header">
       <img
-        src={`http://127.0.0.1:5000${campaign.image_url}`}
+        src={`http://1180973-cr87650.tw1.ru${campaign.image_url}`}
         alt={campaign.title}
         className="project-header__bg"
       />

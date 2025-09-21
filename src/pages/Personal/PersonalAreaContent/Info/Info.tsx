@@ -13,7 +13,7 @@ export const Info = () => {
     useEffect(() => {
         const token = Cookies.get('token');
 
-        axios.get('http://127.0.0.1:5000/user', {
+        axios.get('http://1180973-cr87650.tw1.ru/user', {
             headers: {
                 Authorization: `Bearer ${token}`
             }
@@ -26,7 +26,7 @@ export const Info = () => {
             if (savedImage) {
                 setPhotoUrl(savedImage);
             } else {
-                axios.get('http://127.0.0.1:5000/random-icon', {
+                axios.get('http://1180973-cr87650.tw1.ru/random-icon', {
                     responseType: 'blob'
                 }).then(res => {
                     const imageUrl = URL.createObjectURL(res.data);
@@ -53,7 +53,7 @@ export const Info = () => {
     const handleFinish = (values: any) => {
         const token = Cookies.get('token');
 
-        axios.put('http://127.0.0.1:5000/user', values, {
+        axios.put('http://1180973-cr87650.tw1.ru/user', values, {
             headers: {
                 Authorization: `Bearer ${token}`
             }

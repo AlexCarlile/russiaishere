@@ -27,7 +27,7 @@ export const NewsTable = () => {
 
   const fetchNews = async () => {
     try {
-      const response = await axios.get('http://127.0.0.1:5000/api/news');
+      const response = await axios.get('http://1180973-cr87650.tw1.ru/api/news');
       setNewsList(response.data);
     } catch (error) {
       console.error('Ошибка при загрузке новостей:', error);
@@ -42,7 +42,7 @@ export const NewsTable = () => {
     if (selectedTextId === null) return;
 
     try {
-      await axios.put(`http://127.0.0.1:5000/api/news/${selectedTextId}`, {
+      await axios.put(`http://1180973-cr87650.tw1.ru/api/news/${selectedTextId}`, {
         text: editorValue,
       });
       message.success('Текст обновлен');
@@ -58,7 +58,7 @@ export const NewsTable = () => {
 
   const updateStatus = async (id: number, newStatus: string) => {
     try {
-      await axios.put(`http://127.0.0.1:5000/api/news/${id}`, { status: newStatus });
+      await axios.put(`http://1180973-cr87650.tw1.ru/api/news/${id}`, { status: newStatus });
       setNewsList((prev) =>
         prev.map((n) => (n.id === id ? { ...n, status: newStatus } : n))
       );
@@ -69,7 +69,7 @@ export const NewsTable = () => {
 
   const updateField = async (id: number, field: 'title' | 'date', value: string) => {
     try {
-      await axios.put(`http://127.0.0.1:5000/api/news/${id}`, {
+      await axios.put(`http://1180973-cr87650.tw1.ru/api/news/${id}`, {
         [field]: value,
       });
       message.success(`Поле "${field}" обновлено`);
@@ -123,7 +123,7 @@ export const NewsTable = () => {
 
     const handleDownload = async () => {
         try {
-            const response = await axios.get('http://127.0.0.1:5000/api/news');
+            const response = await axios.get('http://1180973-cr87650.tw1.ru/api/news');
             const csv = convertToCSV(response.data);
             const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
             saveAs(blob, 'news_export.csv');
@@ -215,7 +215,7 @@ export const NewsTable = () => {
       Cell: ({ row }) => {
         const fileName = row.original.file;
         const fullUrl = fileName
-          ? `http://127.0.0.1:5000/uploads/news/${fileName}`
+          ? `http://1180973-cr87650.tw1.ru/uploads/news/${fileName}`
           : null;
 
         const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -227,7 +227,7 @@ export const NewsTable = () => {
 
           try {
             await axios.put(
-              `http://127.0.0.1:5000/api/news/${row.original.id}`,
+              `http://1180973-cr87650.tw1.ru/api/news/${row.original.id}`,
               formData,
               { headers: { 'Content-Type': 'multipart/form-data' } }
             );

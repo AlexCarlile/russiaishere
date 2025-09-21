@@ -31,7 +31,7 @@ export const UsersTable: React.FC<UsersTableProps> = ({ emailFilter }) => {
     // Вынес функция сюда, в тело компонента
     const fetchUsers = async () => {
         try {
-            const response = await axios.get(`http://127.0.0.1:5000/api/users`);
+            const response = await axios.get(`http://1180973-cr87650.tw1.ru/api/users`);
             setUsers(response.data);
         } catch (error) {
             console.error('Error fetching users:', error);
@@ -56,7 +56,7 @@ export const UsersTable: React.FC<UsersTableProps> = ({ emailFilter }) => {
         if (!confirmDelete) return;
 
         try {
-            await axios.delete(`http://127.0.0.1:5000/api/users/${userId}`);
+            await axios.delete(`http://1180973-cr87650.tw1.ru/api/users/${userId}`);
             setUsers(prev => prev.filter(user => user.id !== userId));
             alert('Пользователь успешно удалён');
         } catch (error) {
@@ -73,7 +73,7 @@ export const UsersTable: React.FC<UsersTableProps> = ({ emailFilter }) => {
         );
 
         try {
-            await axios.put(`http://127.0.0.1:5000/api/users/${userId}`, updateData);
+            await axios.put(`http://1180973-cr87650.tw1.ru/api/users/${userId}`, updateData);
             alert('Данные пользователя успешно обновлены');
             fetchUsers();
         } catch (error) {
@@ -87,8 +87,8 @@ export const UsersTable: React.FC<UsersTableProps> = ({ emailFilter }) => {
     const fetchFilteredUsers = async () => {
         try {
         const url = emailFilter
-            ? `http://127.0.0.1:5000/api/users?email=${encodeURIComponent(emailFilter)}`
-            : `http://127.0.0.1:5000/api/users`;
+            ? `http://1180973-cr87650.tw1.ru/api/users?email=${encodeURIComponent(emailFilter)}`
+            : `http://1180973-cr87650.tw1.ru/api/users`;
         const response = await axios.get(url);
         setUsers(response.data);
         } catch (error) {
@@ -199,7 +199,7 @@ export const UsersTable: React.FC<UsersTableProps> = ({ emailFilter }) => {
     // Обработчик клика по кнопке
     const handleDownload = () => {
         // ВАЖНО: скачать именно все данные из БД, а не отфильтрованные на клиенте
-        axios.get('http://127.0.0.1:5000/api/users') // без фильтра, все данные
+        axios.get('http://1180973-cr87650.tw1.ru/api/users') // без фильтра, все данные
         .then(response => {
             const csv = convertToCSV(response.data);
             const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });

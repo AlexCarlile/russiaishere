@@ -60,7 +60,7 @@ export const ModeratorCampaignList: React.FC<CampaignListProps> = ({ campaigns }
                             borderRadius: '32px',
                             overflow: 'hidden',
                             backgroundColor: '#f0f0f0',
-                            backgroundImage: `url(http://127.0.0.1:5000${campaign.image_url})`,
+                            backgroundImage: `url(http://1180973-cr87650.tw1.ru${campaign.image_url})`,
                             backgroundSize: 'cover',
                             backgroundPosition: 'center',
                             display: 'flex',

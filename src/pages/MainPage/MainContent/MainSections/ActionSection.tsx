@@ -21,7 +21,7 @@ export const ActionSection = () => {
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
   useEffect(() => {
-    axios.get('http://127.0.0.1:5000/api/winners')
+    axios.get('http://1180973-cr87650.tw1.ru/api/winners')
       .then(res => setWinners(res.data))
       .catch(err => console.error(err));
   }, []);
@@ -66,7 +66,7 @@ export const ActionSection = () => {
       Cell: ({ cell }) => {
         const file = cell.getValue<string | null>();
         if (!file) return 'Нет изображения';
-        const url = `http://127.0.0.1:5000/uploads/project_files/${file}`;
+        const url = `http://1180973-cr87650.tw1.ru/uploads/project_files/${file}`;
         return (
           <img
             src={url}
@@ -86,7 +86,7 @@ export const ActionSection = () => {
 
         const url = design.startsWith('http')
           ? design
-          : `http://127.0.0.1:5000/uploads/project_files_design/${design}`;
+          : `http://1180973-cr87650.tw1.ru/uploads/project_files_design/${design}`;
 
         return (
           <img

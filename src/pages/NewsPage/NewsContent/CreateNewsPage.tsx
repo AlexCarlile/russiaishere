@@ -51,7 +51,7 @@ export const CreateNewsPage: React.FC = () => {
 
     try {
       setLoading(true);
-      await axios.post('http://127.0.0.1:5000/api/news/admin', formData);
+      await axios.post('http://1180973-cr87650.tw1.ru/api/news/admin', formData);
       message.success('Новость добавлена');
       setTitle('');
       setDate('');

@@ -214,7 +214,7 @@ def update_campaign(campaign_id):
     db.commit()
     return jsonify({"message": "User updated successfully"}), 200
 
-ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'webp', 'pdf'}
 ALLOWED_EXTENSIONS_PROJECTS = {'pdf', 'doc', 'docx', 'xlsx', 'pptx', 'png', 'jpg', 'jpeg', 'gif'}
 
 # Функция для проверки разрешенного расширения файла

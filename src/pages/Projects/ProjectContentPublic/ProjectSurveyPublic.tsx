@@ -27,7 +27,7 @@ const ProjectSurveyPublic: React.FC<ProjectSurveyPublicProps> = ({ teamId }) => 
     const fetchAnswers = async () => {
       try {
         const response = await fetch(
-          `http://127.0.0.1:5000/api/get-public-answers?team_id=${teamId}`
+          `http://1180973-cr87650.tw1.ru/api/get-public-answers?team_id=${teamId}`
         );
         if (!response.ok) throw new Error("Ошибка загрузки данных");
 

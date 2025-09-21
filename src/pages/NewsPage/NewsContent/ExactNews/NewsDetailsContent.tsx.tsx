@@ -11,7 +11,7 @@ export const NewsDetailsContent: React.FC = () => {
     useEffect(() => {
         const fetchNewsItem = async () => {
             try {
-                const response = await axios.get(`http://127.0.0.1:5000/api/news/${id}`);
+                const response = await axios.get(`http://1180973-cr87650.tw1.ru/api/news/${id}`);
                 setNewsItem(response.data);
             } catch (error) {
                 console.error('Ошибка при загрузке новости:', error);
@@ -33,7 +33,7 @@ export const NewsDetailsContent: React.FC = () => {
                 {dayjs(newsItem.date).format('DD.MM.YYYY')}
             </p>
             <img
-                src={`http://127.0.0.1:5000/uploads/news/${newsItem.file}`}
+                src={`http://1180973-cr87650.tw1.ru/uploads/news/${newsItem.file}`}
                 alt={newsItem.title}
                 style={{ width: '100%', borderRadius: '16px', margin: '20px 0' }}
             />

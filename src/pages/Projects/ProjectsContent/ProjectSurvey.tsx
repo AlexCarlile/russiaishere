@@ -79,7 +79,7 @@ export const ProjectSurvey = forwardRef<ProjectSurveyRef, ProjectSurveyProps>(({
 
     const fetchAnswers = async () => {
       try {
-        const response = await fetch(`http://127.0.0.1:5000/api/get-answers?team_id=${teamId}`, {
+        const response = await fetch(`http://1180973-cr87650.tw1.ru/api/get-answers?team_id=${teamId}`, {
           headers: { Authorization: `Bearer ${Cookies.get("token")}` },
         });
         if (!response.ok) throw new Error("Ошибка загрузки данных");
@@ -115,7 +115,7 @@ export const ProjectSurvey = forwardRef<ProjectSurveyRef, ProjectSurveyProps>(({
 
     try {
       await fileUploadRef.current?.handleUpload();
-      await fetch("http://127.0.0.1:5000/api/save-answers", {
+      await fetch("http://1180973-cr87650.tw1.ru/api/save-answers", {
         method: "POST",
         headers: {
           Authorization: `Bearer ${Cookies.get("token")}`,

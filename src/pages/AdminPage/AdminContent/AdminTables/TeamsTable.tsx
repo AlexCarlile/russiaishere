@@ -31,9 +31,9 @@ export const TeamsTable = () => {
     const fetchData = async () => {
         try {
             const [teamsRes, membersRes, campaignsRes] = await Promise.all([
-                axios.get('http://127.0.0.1:5000/api/teams'),
-                axios.get('http://127.0.0.1:5000/api/team_members'),
-                axios.get('http://127.0.0.1:5000/api/campaigns'),
+                axios.get('http://1180973-cr87650.tw1.ru/api/teams'),
+                axios.get('http://1180973-cr87650.tw1.ru/api/team_members'),
+                axios.get('http://1180973-cr87650.tw1.ru/api/campaigns'),
             ]);
 
             const teams: Team[] = teamsRes.data;
@@ -112,10 +112,10 @@ export const TeamsTable = () => {
     // Обработчик скачивания CSV
     const handleDownload = () => {
         // Для актуальных данных можно повторно запросить, если нужно:
-        axios.get('http://127.0.0.1:5000/api/teams')
+        axios.get('http://1180973-cr87650.tw1.ru/api/teams')
         .then((teamsRes) => {
-            axios.get('http://127.0.0.1:5000/api/team_members').then((membersRes) => {
-            axios.get('http://127.0.0.1:5000/api/campaigns').then((campaignsRes) => {
+            axios.get('http://1180973-cr87650.tw1.ru/api/team_members').then((membersRes) => {
+            axios.get('http://1180973-cr87650.tw1.ru/api/campaigns').then((campaignsRes) => {
                 const teamsData: Team[] = teamsRes.data;
                 const membersData: TeamMember[] = membersRes.data;
                 const campaignsData: Campaign[] = campaignsRes.data;
