@@ -65,6 +65,13 @@ export const Info = () => {
     const handleFinish = (values: any) => {
         const token = Cookies.get('token');
 
+        // Если есть файл наставника, берем только имя
+        if (fileList.length > 0) {
+            values.file = fileList[0].name;
+        } else {
+            values.file = null;
+        }
+
         axios.put('http://1180973-cr87650.tw1.ru/user', values, {
             headers: {
                 Authorization: `Bearer ${token}`
