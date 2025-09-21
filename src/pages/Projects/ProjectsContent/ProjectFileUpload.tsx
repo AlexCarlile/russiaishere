@@ -162,7 +162,7 @@ const ProjectFileUpload = forwardRef<ProjectFileUploadRef, ProjectFileUploadProp
             maxCount={1}
             disabled={disabled}
             onPreview={(file) =>
-            window.open(file.url || file.thumbUrl || "", "_blank")
+                window.open(file.url || file.thumbUrl || "", "_blank")
             }
             accept="image/*"
         >

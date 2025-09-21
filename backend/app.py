@@ -642,7 +642,7 @@ def get_project_file():
         row = cursor.fetchone()
         if row and row[0]:
             filename = row[0]
-            file_url = f"http://127.0.0.1:5000/uploads/project_files/{filename}"
+            file_url = f"http://1180973-cr87650.tw1.ru/uploads/project_files/{filename}"
             return jsonify({"filename": filename, "file_url": file_url}), 200
         else:
             return jsonify({"filename": None, "file_url": None}), 200
@@ -1540,7 +1540,7 @@ def get_public_project(team_id):
             if filename:
                 project_data['file'] = {
                     'filename': filename,
-                    'file_url': f"http://127.0.0.1:5000/uploads/project_files/{filename}"
+                    'file_url': f"http://1180973-cr87650.tw1.ru/uploads/project_files/{filename}"
                 }
 
                         # Если файл есть, формируем url
@@ -1548,7 +1548,7 @@ def get_public_project(team_id):
             if filename_design:
                 project_data['file_design'] = {
                     'filename_design': filename_design,
-                    'file_url': f"http://127.0.0.1:5000/uploads/project_files_design/{filename_design}"
+                    'file_url': f"http://1180973-cr87650.tw1.ru/uploads/project_files_design/{filename_design}"
             }
 
         else:
@@ -1665,7 +1665,7 @@ def upload_design_file():
         cursor.close()
         db.close()
 
-    file_url = f"http://127.0.0.1:5000/uploads/project_files_design/{filename}"
+    file_url = f"http://1180973-cr87650.tw1.ru/uploads/project_files_design/{filename}"
     return jsonify({"filename": filename, "file_url": file_url}), 200
 
 @app.route('/api/news/admin', methods=['POST'])
