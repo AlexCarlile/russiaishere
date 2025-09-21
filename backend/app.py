@@ -18,6 +18,7 @@ import uuid
 from werkzeug.utils import secure_filename
 import logging
 import sys
+from urllib.parse import unquote
 
 app = Flask(__name__)
 
@@ -73,21 +74,17 @@ def uploaded_news_file(filename):
     return send_from_directory(app.config['UPLOAD_FOLDER_NEWS'], filename)
 
 @app.route('/uploads/mentorsRequest/<path:filename>', methods=['GET', 'DELETE'])
-@cross_origin()  # чтобы CORS не мешал
+@cross_origin()
 def mentors_file(filename):
-    file_path = os.path.join(app.config['UPLOAD_FOLDER_MENTORS'], filename)
+    decoded_filename = unquote(filename)  # декодируем URL
+    file_path = os.path.join(app.config['UPLOAD_FOLDER_MENTORS'], decoded_filename)
 
     if request.method == 'GET':
         if os.path.exists(file_path):
-            return send_from_directory(app.config['UPLOAD_FOLDER_MENTORS'], filename, as_attachment=True)
+            return send_from_directory(app.config['UPLOAD_FOLDER_MENTORS'], decoded_filename)
         return jsonify({'error': 'Файл не найден'}), 404
 
     if request.method == 'DELETE':
-        # Декодируем URL на всякий случай
-        from urllib.parse import unquote
-        decoded_filename = unquote(filename)
-        file_path = os.path.join(app.config['UPLOAD_FOLDER_MENTORS'], decoded_filename)
-
         if os.path.exists(file_path):
             try:
                 os.remove(file_path)
@@ -381,10 +378,6 @@ def upload_file():
         return jsonify({'error': f'Недопустимый формат файла: {ext}'}), 400
 
     try:
-        # Создаем уникальное имя
-        import uuid
-        from werkzeug.utils import secure_filename
-
         unique_name = f"{uuid.uuid4().hex}.{ext}"
         safe_filename = secure_filename(unique_name)
         save_folder = app.config['UPLOAD_FOLDER_MENTORS']

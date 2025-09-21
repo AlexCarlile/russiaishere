@@ -51,9 +51,9 @@ export const Info = () => {
             if (savedFile) {
             setFileList([{
                 uid: '-1',
-                name: savedFile,
+                name: response.data.filename,  // uuid имя
                 status: 'done',
-                url: `http://1180973-cr87650.tw1.ru/uploads/mentorsRequest/${savedFile}`
+                url: `http://1180973-cr87650.tw1.ru/uploads/mentorsRequest/${response.data.filename}`
             }]);
             }
         }).catch(error => {
