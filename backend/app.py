@@ -75,7 +75,7 @@ def uploaded_news_file(filename):
     return send_from_directory(app.config['UPLOAD_FOLDER_NEWS'], filename)
 
 @app.route('/api/mentors/<string:email>', methods=['PUT'])
-@cross_origin()
+# @cross_origin()
 def update_mentor_file(email):
     if request.content_type and request.content_type.startswith("multipart/form-data"):
         file = request.files.get('file')
