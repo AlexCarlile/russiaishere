@@ -473,15 +473,16 @@ def manage_user():
         locality = data.get('locality')
         school = data.get('school')
         role = data.get('role')
+        file = data.get('file')
 
         try:
             db = sqlite3.connect(DATABASE_USERS)
             cursor = db.cursor()
             cursor.execute('''
                 UPDATE Users
-                SET name = ?, surname = ?, region = ?, locality = ?, school = ?, role = ?
+                SET name = ?, surname = ?, region = ?, locality = ?, school = ?, role = ?, file = ?
                 WHERE email = ?
-            ''', (name, surname, region, locality, school, role, current_user_email))
+            ''', (name, surname, region, locality, school, role, file, current_user_email))
             db.commit()
             return jsonify({"msg": "User data updated successfully"}), 200
         except Exception as e:

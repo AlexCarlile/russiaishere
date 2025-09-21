@@ -9,6 +9,7 @@ export const Info = () => {
     const [form] = Form.useForm();
     const [loading, setLoading] = useState(true);
     const [photoUrl, setPhotoUrl] = useState<string | null>(null);
+    const [fileList, setFileList] = useState<any[]>([]);
 
     useEffect(() => {
         const token = Cookies.get('token');
@@ -43,6 +44,17 @@ export const Info = () => {
                 }).catch(() => {
                     message.error('Не удалось загрузить иконку');
                 });
+            }
+
+            // Если есть файл наставника
+            const savedFile = response.data.file;
+            if (savedFile) {
+            setFileList([{
+                uid: '-1',
+                name: savedFile,
+                status: 'done',
+                url: `http://1180973-cr87650.tw1.ru/uploads/mentorsRequest/${savedFile}`
+            }]);
             }
         }).catch(error => {
             message.error('Ошибка при загрузке данных пользователя'); // Использование message из antd
@@ -158,47 +170,49 @@ export const Info = () => {
                                         <div style={{ width: '100%', marginTop: 24 }}>
                                             <Form.Item label="Файл наставника" name="file">
                                                 <Upload
-                                                    beforeUpload={() => false} // Отменяем автоматическую загрузку
+                                                    beforeUpload={() => false} // отменяем автоматическую загрузку
                                                     maxCount={1}
-                                                    onChange={async ({ file, fileList }) => {
-                                                    if (file.status === 'removed') return;
+                                                    fileList={fileList} // используем состояние
+                                                    onChange={({ fileList }) => setFileList(fileList)} // синхронизация с Upload
+                                                    onRemove={async (file) => {
+                                                        const oldFile = form.getFieldValue('file');
+                                                        if (oldFile) {
+                                                        await axios.delete(`http://1180973-cr87650.tw1.ru/uploads/mentorsRequest/${oldFile}`);
+                                                        form.setFieldsValue({ file: null });
+                                                        setFileList([]); // очистка состояния
+                                                        }
+                                                    }}
+                                                    customRequest={async ({ file, onSuccess, onError }) => {
+                                                        try {
+                                                        const formData = new FormData();
+                                                        formData.append('file', file as File);
 
-                                                    const formData = new FormData();
-                                                    formData.append('file', file.originFileObj as File);
-
-                                                    try {
-                                                        // Загружаем новый файл
                                                         const response = await axios.post(
-                                                        'http://1180973-cr87650.tw1.ru/upload',
-                                                        formData,
-                                                        { headers: { 'Content-Type': 'multipart/form-data' } }
+                                                            'http://1180973-cr87650.tw1.ru/upload',
+                                                            formData,
+                                                            { headers: { 'Content-Type': 'multipart/form-data' } }
                                                         );
 
-                                                        const newFileName = response.data.filename;
-                                                        const oldFileName = form.getFieldValue('file');
-
-                                                        // Если был старый файл — удаляем его
-                                                        if (oldFileName) {
-                                                        await axios.delete(`http://1180973-cr87650.tw1.ru/uploads/mentorsRequest/${oldFileName}`);
-                                                        }
-
-                                                        // Сохраняем имя нового файла в форме
-                                                        form.setFieldsValue({ file: newFileName });
+                                                        form.setFieldsValue({ file: response.data.filename });
+                                                        onSuccess?.(response.data, file as any);
+                                                        setFileList([{
+                                                            uid: '-1',
+                                                            name: response.data.filename,
+                                                            status: 'done',
+                                                            url: `http://1180973-cr87650.tw1.ru/uploads/mentorsRequest/${response.data.filename}`
+                                                        }]);
                                                         message.success('Файл успешно загружен');
-                                                    } catch (err) {
+                                                        } catch (err) {
                                                         console.error(err);
+                                                        onError?.(err as any);
                                                         message.error('Ошибка при загрузке файла');
-                                                    }
+                                                        }
                                                     }}
-                                                    fileList={form.getFieldValue('file') ? [{
-                                                    uid: '-1',
-                                                    name: form.getFieldValue('file'),
-                                                    status: 'done',
-                                                    url: `http://1180973-cr87650.tw1.ru/uploads/mentorsRequest/${form.getFieldValue('file')}`
-                                                    }] : []}
-                                                >
+                                                    >
                                                     <Button icon={<UploadOutlined />}>Выбрать файл</Button>
-                                                </Upload>
+                                                    </Upload>
+
+
                                             </Form.Item>
                                         </div>
                                         )}
