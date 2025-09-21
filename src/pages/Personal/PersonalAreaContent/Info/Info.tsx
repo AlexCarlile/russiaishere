@@ -12,6 +12,7 @@ export const Info = () => {
     const [fileList, setFileList] = useState<any[]>([]);
     const [fileName, setFileName] = useState<string | null>(null);
     const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+    const [userId, setUserId] = useState<number | null>(null); 
 
 
     useEffect(() => {
@@ -23,6 +24,7 @@ export const Info = () => {
             }
         }).then(response => {
             form.setFieldsValue(response.data);
+            setUserId(response.data.email);
             setLoading(false);
 
             // Получаем фото пользователя, если оно существует
@@ -67,51 +69,38 @@ export const Info = () => {
 
     const handleFinish = async (values: any) => {
         const token = Cookies.get('token');
-
         const mentorFileInput = document.getElementById('mentorFileInput') as HTMLInputElement;
 
-        // если выбран новый файл наставника → сначала загружаем на сервер
+        if (!userId) {
+            message.error('Не удалось определить ID пользователя');
+            return;
+        }
+
         if (mentorFileInput?.files && mentorFileInput.files[0]) {
             const formData = new FormData();
-            formData.append('mentor_file', mentorFileInput.files[0]);
+            formData.append('file', mentorFileInput.files[0]);
 
             try {
-                const uploadRes = await axios.post(
-                    'http://1180973-cr87650.tw1.ru/upload-mentor',
-                    formData,
-                    {
-                        headers: {
-                            Authorization: `Bearer ${token}`,
-                            'Content-Type': 'multipart/form-data'
-                        }
-                    }
-                );
-
-                // сервер должен вернуть имя файла (uuid/название)
-                values.file = uploadRes.data.filename;
+            await axios.put(
+                `http://1180973-cr87650.tw1.ru/api/mentors/${userId}`, // 👈 теперь всегда есть id
+                formData,
+                {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    'Content-Type': 'multipart/form-data'
+                }
+                }
+            );
+            message.success('Файл наставника обновлён');
             } catch (error) {
-                message.error('Ошибка при загрузке файла наставника');
-                return;
+            message.error('Ошибка при загрузке файла наставника');
             }
         } else {
-            // если файл уже есть и пользователь его не менял
-            if (fileList.length > 0) {
-                values.file = fileList[0].name;
-            } else {
-                values.file = null;
-            }
+            message.info('Файл не выбран');
         }
+        };
 
-        // обновляем профиль пользователя
-        try {
-            await axios.put('http://1180973-cr87650.tw1.ru/user', values, {
-                headers: { Authorization: `Bearer ${token}` }
-            });
-            message.success('Данные успешно обновлены');
-        } catch (error) {
-            message.error('Ошибка при обновлении данных пользователя');
-        }
-    };
+
 
     if (loading) {
         return <Spin />;

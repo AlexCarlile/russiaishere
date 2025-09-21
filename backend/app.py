@@ -86,7 +86,7 @@ def update_mentor_file(user_id):
 
             db = get_db_users()
             cursor = db.cursor()
-            cursor.execute("UPDATE Users SET file = ? WHERE id = ?", (new_filename, user_id))
+            cursor.execute("UPDATE Users SET file = ? WHERE email = ?", (new_filename, user_id))
             db.commit()
             db.close()
 
