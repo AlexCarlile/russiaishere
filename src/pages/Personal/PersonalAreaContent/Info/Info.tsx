@@ -154,6 +154,54 @@ export const Info = () => {
                                         </Form.Item>
                                     </div>
 
+                                    {form.getFieldValue('role') === '?наставник' && (
+                                        <div style={{ width: '100%', marginTop: 24 }}>
+                                            <Form.Item label="Файл наставника" name="file">
+                                                <Upload
+                                                    beforeUpload={() => false} // Отменяем автоматическую загрузку
+                                                    maxCount={1}
+                                                    onChange={async ({ file, fileList }) => {
+                                                    if (file.status === 'removed') return;
+
+                                                    const formData = new FormData();
+                                                    formData.append('file', file.originFileObj as File);
+
+                                                    try {
+                                                        // Загружаем новый файл
+                                                        const response = await axios.post(
+                                                        'http://1180973-cr87650.tw1.ru/upload',
+                                                        formData,
+                                                        { headers: { 'Content-Type': 'multipart/form-data' } }
+                                                        );
+
+                                                        const newFileName = response.data.filename;
+                                                        const oldFileName = form.getFieldValue('file');
+
+                                                        // Если был старый файл — удаляем его
+                                                        if (oldFileName) {
+                                                        await axios.delete(`http://1180973-cr87650.tw1.ru/uploads/mentorsRequest/${oldFileName}`);
+                                                        }
+
+                                                        // Сохраняем имя нового файла в форме
+                                                        form.setFieldsValue({ file: newFileName });
+                                                        message.success('Файл успешно загружен');
+                                                    } catch (err) {
+                                                        console.error(err);
+                                                        message.error('Ошибка при загрузке файла');
+                                                    }
+                                                    }}
+                                                    fileList={form.getFieldValue('file') ? [{
+                                                    uid: '-1',
+                                                    name: form.getFieldValue('file'),
+                                                    status: 'done',
+                                                    url: `http://1180973-cr87650.tw1.ru/uploads/mentorsRequest/${form.getFieldValue('file')}`
+                                                    }] : []}
+                                                >
+                                                    <Button icon={<UploadOutlined />}>Выбрать файл</Button>
+                                                </Upload>
+                                            </Form.Item>
+                                        </div>
+                                        )}
 
                                     <div>
                                         <Button 

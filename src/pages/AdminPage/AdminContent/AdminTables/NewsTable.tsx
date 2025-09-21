@@ -249,7 +249,9 @@ export const NewsTable = () => {
                 onClick={() => setSelectedImage(fullUrl)}
               />
             )}
-            <input type="file" onChange={handleFileChange} />
+            <input
+              type="file" onChange={handleFileChange} 
+            />
           </div>
         );
       },
